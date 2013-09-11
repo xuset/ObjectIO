@@ -59,10 +59,7 @@ public class MarkupMsg{
 			if (a.name.equals(name))
 				return a;
 		}
-		MsgAttribute a = new MsgAttribute();
-		a.name = name;
-		attribute.add(a);
-		return a;
+		return null;
 	}
 	
 	
