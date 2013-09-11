@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import objectIO.connection.Connection;
 import objectIO.connection.ConnectionHub;
 import objectIO.connection.p2pServer.messages.ConnectMsg;
 import objectIO.connection.p2pServer.messages.Message;
@@ -19,13 +20,9 @@ public class ServerHub extends ConnectionHub<ServerConnection> implements P2PHub
 	
 	public void setConnectionEvent(ConnectionEvent event) { connectionEvent = event; }
 	
-	public ServerHub(long id, int port) {
+	public ServerHub(long id, int port) throws IOException {
 		super(id);
-		try {
-			server = new ServerSocket(port);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		server = new ServerSocket(port);
 	}
 	
 	boolean sendRawMessage(Message dataO) {
@@ -88,6 +85,13 @@ public class ServerHub extends ConnectionHub<ServerConnection> implements P2PHub
 		return true;
 	}
 	
+	protected void disconnectCon(Connection c) {
+		connections.remove(c);
+		for (ServerConnection con : connections) {
+			con.sendRawMessage(ConnectMsg.removeConnection(c));
+		}
+	}
+	
 	protected void addNewConnection(Socket s) {
 		ServerConnection c = new ServerConnection(s, this);
 		broadcastConnections(c);
@@ -98,15 +102,11 @@ public class ServerHub extends ConnectionHub<ServerConnection> implements P2PHub
 	}
 	
 	private void broadcastConnections(ServerConnection newCon) {
-		Message newConorg = new Message();
-		ConnectMsg.addNewConnection(newConorg, newCon.getEndPointId());
 		for (ServerConnection c : connections) {
-			c.sendRawMessage(newConorg);
+			c.sendRawMessage(ConnectMsg.addConnection(newCon));
 			c.flush();
 			
-			Message cOrg = new Message();
-			ConnectMsg.addNewConnection(cOrg, c.getEndPointId());
-			newCon.sendRawMessage(cOrg);
+			newCon.sendRawMessage(ConnectMsg.addConnection(c));
 		}
 		newCon.flush();
 	}

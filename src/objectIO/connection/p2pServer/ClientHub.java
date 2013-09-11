@@ -104,6 +104,7 @@ public class ClientHub extends ConnectionHub<ClientConnection> implements P2PHub
 	}
 	
 	public synchronized void shutdown() {
+		
 		shutdownIO();
 		streamBase.shutdown();
 		if (socket != null) {
@@ -131,8 +132,10 @@ public class ClientHub extends ConnectionHub<ClientConnection> implements P2PHub
 	}
 	
 	private void handleNewMessage(Message message) {
-		if (ConnectMsg.isConnectionMessage(message)) {
+		if (ConnectMsg.isAddConnection(message)) {
 			addNewConnection(message);
+		} else if (ConnectMsg.isRemoveConnection(message)) {
+			removeConnection(message);
 		} else {
 			addMessageToQueue(message);
 		}
@@ -145,8 +148,13 @@ public class ClientHub extends ConnectionHub<ClientConnection> implements P2PHub
 	}
 	
 	private void addNewConnection(Message msg) {
-		long newCon = ConnectMsg.getnewConnections(msg);
+		long newCon = ConnectMsg.getConChangeId(msg);
 		if (getConnection(newCon) == null)
 			new ClientConnection(newCon, this);
+	}
+	
+	private void removeConnection(Message msg) {
+		ClientConnection c = getConnection(ConnectMsg.getConChangeId(msg));
+		c.disconnect();
 	}
 }

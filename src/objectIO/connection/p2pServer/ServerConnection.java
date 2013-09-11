@@ -77,7 +77,9 @@ public class ServerConnection extends StreamIO implements P2PConnection{
 	}
 	
 	public synchronized void disconnect() {
-		hub.getAllConnections().remove(this);
+		hub.disconnectCon(this);
+		if (hub.connectionEvent != null)
+			hub.connectionEvent.onDisconnection(hub, this);
 		shutdownIO();
 		closeStreams();
 		if (socket != null) {

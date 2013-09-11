@@ -71,6 +71,7 @@ public class StreamBase implements Stream{
 					parser.parse(input.readLine());
 				} catch (IOException e) {
 					//System.err.println(e.getMessage());
+					parser.parse(null);
 					e.printStackTrace();
 				}
 			}

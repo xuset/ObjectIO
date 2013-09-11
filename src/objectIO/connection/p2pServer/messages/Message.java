@@ -6,11 +6,11 @@ import objectIO.markupMsg.MsgAttribute;
 
 public class Message extends MarkupMsg {
 	public enum Options {
-		To, From, Broadcast, NewConnection, Type;
+		To, From, Broadcast, NewConnection, RemoveConnection, Type;
 	}
 	
 	public enum Types {
-		Standard, NewConnection;
+		Standard, Connection;
 	}
 	
 	Message(Types type) {
