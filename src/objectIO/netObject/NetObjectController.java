@@ -1,19 +1,33 @@
 package objectIO.netObject;
 
-import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Queue;
 
 import objectIO.connection.Connection;
 import objectIO.connection.Hub;
 import objectIO.markupMsg.MarkupMsg;
 
-
-public class NetObjectController implements NetObjectControllerInterface{
-	private LinkedHashMap<String, NetObject> objects = new LinkedHashMap<String, NetObject>();
+public class NetObjectController implements NetObjectControllerInterface, Runnable{
+	private ConcurrentHashMap<String, NetObject> objects = new ConcurrentHashMap<String, NetObject>();
+	private boolean run = true;
 	private Hub<?> hub;
+	
+	public int threadSleep = 10;
 	
 	public NetObjectController(Hub<?> talkhub) {
 		this.hub = talkhub;
+	}
+	
+	public void stopRunning() {
+		run = false;
+	}
+	
+	public void run() {
+		run = true;
+		while(run) {
+			distributeRecievedUpdates();
+			try { Thread.sleep(threadSleep); } catch (Exception ex) { ex.printStackTrace(); }
+		}
 	}
 	
 	public NetObject getById(String id) {
