@@ -3,8 +3,8 @@ package objectIO.netObject;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Queue;
 
-import objectIO.connection.Connection;
-import objectIO.connection.Hub;
+import objectIO.connections.Connection;
+import objectIO.connections.Hub;
 import objectIO.markupMsg.MarkupMsg;
 
 public class NetObjectController implements NetObjectControllerInterface, Runnable{
@@ -44,7 +44,7 @@ public class NetObjectController implements NetObjectControllerInterface, Runnab
 	
 	public void sendUpdate(MarkupMsg msg, NetObject object, long connectionId) {
 		msg.name = object.getId();
-		hub.sendMessage(msg, connectionId);
+		hub.sendMsg(msg, connectionId);
 	}
 	
 	public void distributeRecievedUpdates() {
@@ -54,7 +54,7 @@ public class NetObjectController implements NetObjectControllerInterface, Runnab
 	}
 	
 	private void distrubute(Connection c) {
-		Queue<MarkupMsg> queue = c.getMessageQueue();
+		Queue<MarkupMsg> queue = c.msgQueue();
 		MarkupMsg msg = null;
 		while ((msg = queue.poll()) != null) {
 			NetObject obj = objects.get(msg.name);

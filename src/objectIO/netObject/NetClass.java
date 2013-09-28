@@ -2,13 +2,14 @@ package objectIO.netObject;
 
 import java.util.LinkedHashMap;
 
-import objectIO.connection.Connection;
+import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
 public class NetClass extends NetObject implements NetObjectControllerInterface{
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
+	private boolean dataToBeSent = false;
 	
 	public NetClass(NetObjectController controller, String name, int size) {
 		super(controller, name);
@@ -38,6 +39,7 @@ public class NetClass extends NetObject implements NetObjectControllerInterface{
 		}
 		msg.name = obj.id;
 		buffer.child.add(msg);
+		dataToBeSent = true;
 	}
 	
 	public void update() {
@@ -46,7 +48,10 @@ public class NetClass extends NetObject implements NetObjectControllerInterface{
 	}
 	
 	private void flushBuffer() {
+		if (!dataToBeSent)
+			return;
 		controller.sendUpdate(buffer, this, currentConnection);
 		buffer = new MarkupMsg();
+		dataToBeSent = false;
 	}
 }

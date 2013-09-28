@@ -1,7 +1,6 @@
 package objectIO.netObject;
 
-import objectIO.connection.AbstractConnection;
-import objectIO.connection.Connection;
+import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
 public class NetVar extends NetObject {
@@ -62,7 +61,7 @@ public class NetVar extends NetObject {
 		if (hasChanged) {
 			MarkupMsg msg = new MarkupMsg();
 			msg.content = value;
-			controller.sendUpdate(msg, this, AbstractConnection.BROADCAST_CONNECTION);
+			controller.sendUpdate(msg, this, Connection.BROADCAST_CONNECTION);
 			hasChanged = false;
 		}
 	}

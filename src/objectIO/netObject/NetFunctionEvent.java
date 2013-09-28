@@ -1,6 +1,6 @@
 package objectIO.netObject;
 
-import objectIO.connection.Connection;
+import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
 public interface NetFunctionEvent {

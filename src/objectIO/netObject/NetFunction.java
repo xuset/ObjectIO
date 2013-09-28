@@ -1,6 +1,6 @@
 package objectIO.netObject;
 
-import objectIO.connection.Connection;
+import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
 
@@ -23,7 +23,7 @@ public class NetFunction extends NetObject {
 	}
 	
 	public void sendCall(MarkupMsg dOrg, Connection c) {
-		sendCall(dOrg, c.getEndPointId());
+		sendCall(dOrg, c.getEndId());
 	}
 	
 	public void sendCall(MarkupMsg dOrg, long connectionId) {
@@ -37,7 +37,7 @@ public class NetFunction extends NetObject {
 			MarkupMsg ret = function.calledFunc(msg, c);
 			if  (ret != null) {
 				ret.setAttribute("type", returnIdentifier);
-				controller.sendUpdate(ret, this, c.getEndPointId());
+				controller.sendUpdate(ret, this, c.getEndId());
 			}
 		} else if (type.equals(returnIdentifier)) {
 			function.returnedFunc(msg, c);
