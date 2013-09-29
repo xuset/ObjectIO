@@ -22,26 +22,32 @@ public class NetFunction extends NetObject {
 		super(null, name);
 	}
 	
-	public void sendCall(MarkupMsg dOrg, Connection c) {
-		sendCall(dOrg, c.getEndId());
+	public void sendCall(MarkupMsg msg, Connection c) {
+		sendCall(msg, c.getEndId());
 	}
 	
-	public void sendCall(MarkupMsg dOrg, long connectionId) {
-		dOrg.setAttribute("type", callIdentifier);
-		controller.sendUpdate(dOrg, this, connectionId);
+	public void sendCall(MarkupMsg msg, long connectionId) {
+		sendMsg(callIdentifier, msg, connectionId);
 	}
 
 	public void parseUpdate(MarkupMsg msg, Connection c) {
 		String type = msg.getAttribute("type").value;
+		MarkupMsg child = msg.child.get(0);
 		if (type.equals(callIdentifier)) {
-			MarkupMsg ret = function.calledFunc(msg, c);
-			if  (ret != null) {
-				ret.setAttribute("type", returnIdentifier);
-				controller.sendUpdate(ret, this, c.getEndId());
-			}
+			MarkupMsg ret = function.calledFunc(child, c);
+			if  (ret != null)
+				sendMsg(returnIdentifier, ret, c.getEndId());
 		} else if (type.equals(returnIdentifier)) {
-			function.returnedFunc(msg, c);
+			function.returnedFunc(child, c);
 		}
 		return;
+	}
+	
+	private void sendMsg(String type, MarkupMsg msg, long connectionId) {
+		MarkupMsg parent = new MarkupMsg();
+		parent.setAttribute("type", type);
+		parent.child.add(msg);
+		controller.sendUpdate(parent, this, connectionId);
+		
 	}
 }

@@ -11,7 +11,7 @@ public class MarkupMsg{
 	public List<MsgAttribute> attribute;
 	public List<MarkupMsg> child;
 	public String content = "";
-	public String name;
+	public String name = "";
 	
 	public boolean hasChild() { return !child.isEmpty(); }
 	public boolean parsedProperly() { return goodFormat; }
