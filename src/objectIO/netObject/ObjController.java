@@ -7,14 +7,14 @@ import objectIO.connections.Connection;
 import objectIO.connections.Hub;
 import objectIO.markupMsg.MarkupMsg;
 
-public class NetObjectController implements NetObjectControllerInterface, Runnable{
+public class ObjController implements ObjControllerI, Runnable{
 	private ConcurrentHashMap<String, NetObject> objects = new ConcurrentHashMap<String, NetObject>();
 	private boolean run = true;
 	private Hub<?> hub;
 	
 	public int threadSleep = 10;
 	
-	public NetObjectController(Hub<?> talkhub) {
+	public ObjController(Hub<?> talkhub) {
 		this.hub = talkhub;
 	}
 	
