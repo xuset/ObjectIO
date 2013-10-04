@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import objectIO.netObject.NetVar;
+
 public class MarkupMsg{
 	
 	protected boolean goodFormat = true;
@@ -82,8 +84,12 @@ public class MarkupMsg{
 		return attribute.add(attr);
 	}
 	
-	public boolean addAttribute(String name, String value) {
-		return attribute.add(new MsgAttribute(name, value));
+	public boolean addAttribute(NetVar<?> v) {
+		return attribute.add(new MsgAttribute(v));
+	}
+	
+	public boolean addAttribute(String name, Object value) {
+		return attribute.add(new MsgAttribute(name, value.toString()));
 	}
 	
 	

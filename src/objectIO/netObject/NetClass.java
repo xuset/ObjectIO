@@ -1,37 +1,43 @@
 package objectIO.netObject;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
-public class NetClass extends NetObject implements NetObjectControllerInterface{
+public class NetClass extends NetObject implements ObjControllerI{
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
 	private boolean dataToBeSent = false;
+	public boolean autoUpdate = false;
 	
-	public NetClass(NetObjectController controller, String name, int size) {
+	public NetClass(ObjController controller, String name, int size) {
 		super(controller, name);
 		objects = new LinkedHashMap<String, NetObject>(size);
 	}
 
-	public void parseUpdate(MarkupMsg msg,  Connection c) {
+	@Override
+	protected void parseUpdate(MarkupMsg msg,  Connection c) {
 		for (MarkupMsg child : msg.child) {
 			NetObject obj = objects.get(child.name);
 			obj.parseUpdate(child, c);
 		}
 	}
 
-	 public boolean syncObject(NetObject obj) {
+	@Override
+	public boolean syncObject(NetObject obj) {
 		boolean ret = (objects.put(obj.id, obj) == null);
 		return ret;
 	}
 
+		@Override
 	public boolean unsyncObject(NetObject obj) {
 		return (objects.remove(obj.id) != null);
 	}
 
+	@Override
 	public void sendUpdate(MarkupMsg msg, NetObject obj, long connectionId) {
 		if (currentConnection != connectionId) {
 			flushBuffer();
@@ -40,8 +46,10 @@ public class NetClass extends NetObject implements NetObjectControllerInterface{
 		msg.name = obj.id;
 		buffer.child.add(msg);
 		dataToBeSent = true;
+		if (autoUpdate)
+			flushBuffer();
 	}
-	
+
 	public void update() {
 		if (buffer.child.isEmpty() == false)
 			flushBuffer();
@@ -53,5 +61,12 @@ public class NetClass extends NetObject implements NetObjectControllerInterface{
 		controller.sendUpdate(buffer, this, currentConnection);
 		buffer = new MarkupMsg();
 		dataToBeSent = false;
+	}
+	
+	@Override
+	public void remove() {
+		for (Map.Entry<String, NetObject> o: objects.entrySet()) {
+			o.getValue().remove();
+		}
 	}
 }

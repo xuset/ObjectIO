@@ -1,5 +1,7 @@
 package objectIO.markupMsg;
 
+import objectIO.netObject.NetVar;
+
 public class MsgAttribute {
 	public String name, value;
 	
@@ -10,6 +12,10 @@ public class MsgAttribute {
 	public MsgAttribute(String name, String value) {
 		this.name = name;
 		this.value = value;
+	}
+	public MsgAttribute(NetVar<?> v) {
+		this.name = v.getId();
+		this.value = v.toString();
 	}
 	
 	public static MsgAttribute cre(String name) {
@@ -34,6 +40,7 @@ public class MsgAttribute {
 	public MsgAttribute set(boolean value) 	{ return set(String.valueOf(value)); }
 	public MsgAttribute set(char value) 	{ return set(String.valueOf(value)); }
 	public MsgAttribute set(char[] value) 	{ return set(String.valueOf(value)); }
+	public MsgAttribute set(Object value)	{ return set(String.valueOf(value)); }
 	public MsgAttribute set(String value) 	{
 		this.value = value;
 		return this;

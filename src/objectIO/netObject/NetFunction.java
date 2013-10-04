@@ -10,11 +10,11 @@ public class NetFunction extends NetObject {
 	
 	public NetFunctionEvent function;
 
-	public NetFunction(NetObjectControllerInterface controller, String name, NetFunctionEvent function) {
+	public NetFunction(ObjControllerI controller, String name, NetFunctionEvent function) {
 		this(controller, name);
 		this.function = function;
 	}
-	public NetFunction(NetObjectControllerInterface controller, String name) {
+	public NetFunction(ObjControllerI controller, String name) {
 		super(controller, name);
 	}
 	
@@ -30,7 +30,8 @@ public class NetFunction extends NetObject {
 		sendMsg(callIdentifier, msg, connectionId);
 	}
 
-	public void parseUpdate(MarkupMsg msg, Connection c) {
+	@Override
+	protected void parseUpdate(MarkupMsg msg, Connection c) {
 		String type = msg.getAttribute("type").value;
 		MarkupMsg child = msg.child.get(0);
 		if (type.equals(callIdentifier)) {

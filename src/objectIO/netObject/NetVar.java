@@ -2,67 +2,154 @@ package objectIO.netObject;
 
 import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
+import objectIO.netObject.NetObject;
+import objectIO.netObject.ObjControllerI;
 
-public class NetVar extends NetObject {
-	private String value;
-	private boolean hasChanged = false;
 
-	public NetVarChange onChangeEvent;
+
+public abstract class NetVar <T> extends NetObject {
+	protected T value;
+	protected T oldValue;
+	
+	public static interface OnChange<T> {
+		public void onChange(NetVar<T> var, Connection c);
+	};
+	
 	public boolean autoUpdate = false;
+	public OnChange<T> event = null;
+	
+	protected abstract T parse(String sValue);
 
-	public NetVar(NetObjectControllerInterface controller, String name) {
-		super(controller, name);
-	}
-	public NetVar(NetObjectControllerInterface controller, String name, String initialValue) {
-		super(controller, name);
-		value = initialValue;
-	}
-	public NetVar(NetObjectControllerInterface controller, String name, String initialValue, boolean autoUpdate) {
-		this(controller, name, initialValue);
-		this.autoUpdate = autoUpdate;
+	public NetVar(T initial, String id, ObjControllerI controller) {
+		super(controller, id);
+		value = initial;
+		oldValue = value;
 	}
 	
-	public NetVar(NetObjectControllerInterface controller, String name, String initialValue, boolean autoUpdate, NetVarChange event) {
-		this(controller, name, initialValue, autoUpdate);
-		onChangeEvent = event;
-	}
-	
-	public String getToString() { return value; }
-	public int getToInt() { return Integer.parseInt(value); }
-	public double getToDouble() { return Double.parseDouble(value); }
-	public float getToFloat() { return Float.parseFloat(value); }
-	public long getToLong() { return Long.parseLong(value); }
-	public boolean getToBool() { return Boolean.parseBoolean(value); }
-	
-	public void set(int value) 		{ set(String.valueOf(value)); }
-	public void set(double value) 	{ set(String.valueOf(value)); }
-	public void set(float value) 	{ set(String.valueOf(value)); }
-	public void set(long value) 	{ set(String.valueOf(value)); }
-	public void set(boolean value) 	{ set(String.valueOf(value)); }
-	public void set(char value) 	{ set(String.valueOf(value)); }
-	public void set(char[] value) 	{ set(String.valueOf(value)); }
-	public void set(String value) 	{
-		hasChanged = true;
-		this.value = value;
+	public void set(T newVal) {
+		value = newVal;
 		if (autoUpdate)
-			sendVar();
+			update();
+	}
+	
+	public T get() {
+		return value;
 	}
 	
 	public void update() {
-		sendVar();
+		if (needsUpdating()) {
+			sendUpdate(toString());
+			oldValue = value;
+		}
 	}
 
-	public void parseUpdate(MarkupMsg msg, Connection c) {
-		value = msg.content;
-		onChangeEvent.onChange(this, c);
+	@Override
+	protected void parseUpdate(MarkupMsg msg, Connection c) {
+		value = parse(msg.content);
+		oldValue = value;
+		if (event != null)
+			event.onChange(this, c);
 	}
 	
-	private void sendVar() {
-		if (hasChanged) {
-			MarkupMsg msg = new MarkupMsg();
-			msg.content = value;
-			controller.sendUpdate(msg, this, Connection.BROADCAST_CONNECTION);
-			hasChanged = false;
+	protected final void sendUpdate(String sValue) {
+		MarkupMsg msg = new MarkupMsg();
+		msg.content = sValue;
+		controller.sendUpdate(msg, this, Connection.BROADCAST_CONNECTION);
+	}
+	
+	protected boolean needsUpdating() {
+		if (value == oldValue || value.equals(oldValue))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return value.toString();
+	}
+	
+	//subclass definitions//
+	
+	//Integer
+	
+	public static class nInt extends NetVar<Integer> {
+		public nInt(Integer initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+		
+		@Override
+		protected Integer parse(String newVal) {
+			return Integer.valueOf(Integer.parseInt(newVal));
+		}
+	}
+	
+	//Boolean
+	
+	public static class nBool extends NetVar<Boolean> {
+		public nBool(Boolean initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+
+		@Override
+		protected Boolean parse(String sValue) {
+			return Boolean.parseBoolean(sValue);
+		}
+	}
+	
+	//Double
+	
+	public static class nDouble extends NetVar<Double> {
+		public nDouble(Double initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+
+		@Override
+		protected Double parse(String sValue) {
+			return Double.parseDouble(sValue);
+		}
+	}
+	
+	//Long
+	
+	public static class nLong extends NetVar<Long> {
+		public nLong(Long initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+
+		@Override
+		protected Long parse(String sValue) {
+			return Long.parseLong(sValue);
+		}
+	}
+	
+	//Float
+	
+	public static class nFloat extends NetVar<Float> {
+		public nFloat(Float initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+
+		@Override
+		protected Float parse(String sValue) {
+			return Float.parseFloat(sValue);
+		}
+	}
+	
+	//String
+	
+	public static class nString extends NetVar<String> {
+		public nString(String initial, String id, ObjControllerI controller) {
+			super(initial, id, controller);
+		}
+
+		@Override
+		protected String parse(String sValue) {
+			return sValue;
+		}
+		
+		@Override
+		public String toString() {
+			return value;
 		}
 	}
 }
