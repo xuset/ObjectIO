@@ -17,7 +17,7 @@ public class P2PServer {
 	public SocketAccept accepter;
 	public ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
 	public ConnectionEvent event = null;
-	public long id = 3l;
+	public long id = 2l;
 	
 	public P2PServer(int port) throws IOException {
 		socket = new ServerSocket(port);
