@@ -57,7 +57,7 @@ public class StreamCon extends Connection{
 	@Override
 	public boolean sendMsg(MarkupMsg message) {
 		try {
-			System.out.println(getId() + " sent: " + message.toString());
+			//System.out.println(getId() + " sent: " + message.toString());
 			String raw = message.toString();
 			out.write(raw.getBytes(), 0, raw.length());
 			out.write(newLine);
@@ -108,14 +108,11 @@ public class StreamCon extends Connection{
 			out.write(m.toString().getBytes());
 			out.write(newLine);
 			out.flush();
-			System.out.println(myId + " sent m&g");
 			String rx = in.readLine();
-			System.out.println(myId + " recieved: " + rx);
 			MarkupMsg rMsg = new MarkupMsg(rx);
 			MsgAttribute na = rMsg.getAttribute(attributeName);
 			if (na != null) {
 				endId = na.getLong();
-				System.out.println("connected " + endId);
 				return true;
 			}
 		} catch (IOException e) {
@@ -150,7 +147,7 @@ public class StreamCon extends Connection{
 			while (true) {
 				try {
 					String raw = in.readLine();
-					System.out.println(myId + " recieved: " + raw);
+					//System.out.println(myId + " recieved: " + raw);
 					parser.parseInput(raw);
 				} catch (IOException e) {
 					if (stopListening == false) {

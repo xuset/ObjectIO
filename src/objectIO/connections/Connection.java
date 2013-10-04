@@ -40,7 +40,6 @@ public abstract class Connection{
 				MsgAttribute na = next.getAttribute(attributeName);
 				if (na != null) {
 					endId = na.getLong();
-					System.out.println("connected " + endId);
 					return true;
 				}
 			}

@@ -10,7 +10,6 @@ public class NetClass extends NetObject implements ObjControllerI{
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
-	private boolean dataToBeSent = false;
 	public boolean autoUpdate = false;
 	
 	public NetClass(ObjController controller, String name, int size) {
@@ -45,7 +44,6 @@ public class NetClass extends NetObject implements ObjControllerI{
 		}
 		msg.name = obj.id;
 		buffer.child.add(msg);
-		dataToBeSent = true;
 		if (autoUpdate)
 			flushBuffer();
 	}
@@ -56,11 +54,10 @@ public class NetClass extends NetObject implements ObjControllerI{
 	}
 	
 	private void flushBuffer() {
-		if (!dataToBeSent)
+		if (buffer.child.isEmpty())
 			return;
 		controller.sendUpdate(buffer, this, currentConnection);
 		buffer = new MarkupMsg();
-		dataToBeSent = false;
 	}
 	
 	@Override

@@ -67,7 +67,6 @@ public class P2PServer {
 	
 	void addConnection(Socket s) {
 		try {
-			System.out.println("server is connecting " + s.getInetAddress().getHostAddress());
 			ServerConnection sCon = new ServerConnection(s, P2PServer.this);
 			broadCastMsg(CmdCrafter.craftNewCon(sCon.getEndId()));
 			synchronized(connections) {
