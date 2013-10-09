@@ -15,7 +15,7 @@ public abstract class NetVar <T> extends NetObject {
 		public void onChange(NetVar<T> var, Connection c);
 	};
 	
-	public boolean autoUpdate = false;
+	public boolean autoUpdate = true;
 	public OnChange<T> event = null;
 	
 	protected abstract T parse(String sValue);

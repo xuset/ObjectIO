@@ -10,7 +10,7 @@ public class NetClass extends NetObject implements ObjControllerI{
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
-	public boolean autoUpdate = false;
+	public boolean autoUpdate = true;
 	
 	public NetClass(ObjController controller, String name, int size) {
 		super(controller, name);
