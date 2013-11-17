@@ -27,6 +27,8 @@ public class NetClass extends NetObject implements ObjControllerI{
 
 	@Override
 	public boolean syncObject(NetObject obj) {
+		if (objects.containsKey(obj.id))
+			throw new HashMapKeyCollision(obj.id + " has already been used");
 		boolean ret = (objects.put(obj.id, obj) == null);
 		return ret;
 	}

@@ -35,6 +35,8 @@ public class ObjController implements ObjControllerI, Runnable{
 	}
 	
 	public boolean syncObject(NetObject obj) {
+		if (objects.containsKey(obj.id))
+			throw new HashMapKeyCollision(obj.id + " has already been used");
 		return (objects.put(obj.id, obj) == null);
 	}
 
