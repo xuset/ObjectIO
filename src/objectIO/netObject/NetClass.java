@@ -1,7 +1,6 @@
 package objectIO.netObject;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
@@ -60,12 +59,5 @@ public class NetClass extends NetObject implements ObjControllerI{
 			return;
 		controller.sendUpdate(buffer, this, currentConnection);
 		buffer = new MarkupMsg();
-	}
-	
-	@Override
-	public void remove() {
-		for (Map.Entry<String, NetObject> o: objects.entrySet()) {
-			o.getValue().remove();
-		}
 	}
 }
