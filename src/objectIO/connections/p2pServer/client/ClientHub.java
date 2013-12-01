@@ -45,14 +45,14 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 		return c.sendMsg(msg);
 	}
 	
-	public boolean broadcastMsg(MarkupMsg msg) {
+	/*public boolean broadcastMsg(MarkupMsg msg) {
 		P2PMsg parent = new P2PMsg();
 		parent.child.add(msg);
 		parent.to(Connection.BROADCAST_CONNECTION);
 		parent.from(getId());
 		parent.setBroadcast(true);
 		return comm.sendMsg(parent);
-	}
+	}*/
 	
 	public boolean addConnection(ClientConnection con) {
 		if (conEvent != null)
@@ -72,7 +72,14 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	}
 	
 	public void flush() {
-		comm.flush();
+		boolean dataSent = false;
+		for (ClientConnection c : connections) {
+			boolean ret = c.flushOutputBuffer();
+			if (ret)
+				dataSent = true;
+		}
+		if (dataSent)
+			comm.flush();
 	}
 
 }

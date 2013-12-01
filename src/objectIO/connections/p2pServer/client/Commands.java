@@ -2,6 +2,7 @@ package objectIO.connections.p2pServer.client;
 
 import objectIO.connections.p2pServer.CmdCrafter;
 import objectIO.connections.p2pServer.P2PMsg;
+import objectIO.markupMsg.MarkupMsg;
 class Commands {
 	
 	public static abstract class CmdChain {
@@ -79,8 +80,12 @@ class Commands {
 		@Override
 		protected void doCommand(P2PMsg msg) {
 			ClientConnection c = hub.getConnection(msg.from());
-			if (c != null)
-				c.msgQueue().add(msg.child.get(0));
+			if (c != null) {
+				for (MarkupMsg m : msg.child)
+					c.msgQueue().add(m);
+			} else {
+				System.err.println("Connection (" + msg.from() + ") is not found. message, " + msg + " recieved.");
+			}
 		}
 	}
 }

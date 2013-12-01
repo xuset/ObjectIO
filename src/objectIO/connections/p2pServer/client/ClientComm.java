@@ -17,7 +17,6 @@ class ClientComm extends StreamCon {
 		this.socket = socket;
 		this.hub = hub;
 		socket.setKeepAlive(true);
-		socket.setTcpNoDelay(true);
 		if (sendMeetAndGreet(3000) == false) {
 			close();
 			throw new IOException("Communication could not be established!");
