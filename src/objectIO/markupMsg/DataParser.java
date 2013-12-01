@@ -6,9 +6,9 @@ class DataParser {
 	HeaderParser header;
 	BodyParser body;
 	
-	DataParser(String input) throws InvalidFormatException{
+	DataParser(String input, int nestedLevels) throws InvalidFormatException{
 		header = parseHeader(input);
-		body = parseBody(input);
+		body = parseBody(input, nestedLevels);
 	}
 	
 	private HeaderParser parseHeader(String input) throws InvalidFormatException{
@@ -31,11 +31,11 @@ class DataParser {
 		return new HeaderParser(s);
 	}
 	
-	private BodyParser parseBody(String input) throws InvalidFormatException{
+	private BodyParser parseBody(String input, int nestedLevels) throws InvalidFormatException{
 		if (endOfHeader == -1)
 			return null;
 		int lastIndex = input.lastIndexOf("/>");
 		String s = input.substring(endOfHeader + 1, lastIndex);
-		return new BodyParser(s);
+		return new BodyParser(s, nestedLevels);
 	}
 }

@@ -30,7 +30,7 @@ public class ServerConnection extends StreamCon{
 		@Override
 		public void parseInput(String input) {
 			if (input != null) {
-				P2PMsg msg = new P2PMsg(input);
+				P2PMsg msg = new P2PMsg(input, 0);
 				server.forwardMsg(msg);
 			} else {
 				disconnect();

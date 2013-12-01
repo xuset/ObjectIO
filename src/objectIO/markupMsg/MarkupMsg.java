@@ -23,13 +23,17 @@ public class MarkupMsg{
 		child = new LinkedList<MarkupMsg>();
 	}
 	
-	public MarkupMsg(String toParse) {
-		parse(toParse);
+	public MarkupMsg(String toParse, int nestedLevels) {
+		parse(toParse, nestedLevels);
 	}
 	
-	protected void parse(String input) {
+	public MarkupMsg(String toParse) {
+		parse(toParse, Integer.MAX_VALUE);
+	}
+	
+	protected void parse(String input, int nestedLevels) {
 		try {
-			DataParser parser = new DataParser(input);
+			DataParser parser = new DataParser(input, nestedLevels);
 			name = parser.header.name;
 			attribute = parser.header.msgAttributes;
 			content = parser.body.content;

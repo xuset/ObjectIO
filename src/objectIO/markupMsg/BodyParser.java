@@ -6,12 +6,16 @@ class BodyParser {
 	LinkedList<MarkupMsg> child = new LinkedList<MarkupMsg>();
 	String content = "";
 	
-	BodyParser(String input) throws InvalidFormatException {
+	BodyParser(String input, int nestedLevels) throws InvalidFormatException {
 		int firstTag = input.indexOf("<");
-		if (firstTag != -1)
+		if (firstTag != -1 && nestedLevels > 0)
 			content = input.substring(0, firstTag).trim();
 		else 
 			content = input;
+		
+		if (nestedLevels <= 0)
+			return;
+		
 		int openTags = 0;
 		int openIndex = -1;
 		
@@ -42,7 +46,7 @@ class BodyParser {
 			
 			if (openTags != 0 && openTags == closedTags && noMoreTags == false) {
 				String newChildString = input.substring(openIndex, closedIndex + 2).trim();
-				child.add(new MarkupMsg(newChildString));
+				child.add(new MarkupMsg(newChildString, nestedLevels - 1));
 				findingClosingTag = false;
 			}
 		}

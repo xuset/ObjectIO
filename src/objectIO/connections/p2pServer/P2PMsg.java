@@ -26,6 +26,10 @@ public class P2PMsg extends MarkupMsg {
 		super(input);
 	}
 	
+	public P2PMsg(String input, int nestedLevels) {
+		super(input, nestedLevels);
+	}
+	
 	public boolean isBroadcast() {
 		if (to() == Connection.BROADCAST_CONNECTION)
 			return true;
