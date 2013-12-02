@@ -1,11 +1,11 @@
-package objectIO.connections.p2pServer.client;
+package objectIO.connections.sockets.p2pServer.client;
 
 import java.io.IOException;
 
 import objectIO.connections.Connection;
 import objectIO.connections.ConnectionHub;
-import objectIO.connections.p2pServer.P2PMsg;
-import objectIO.connections.p2pServer.client.Commands.CmdChain;
+import objectIO.connections.sockets.p2pServer.P2PMsg;
+import objectIO.connections.sockets.p2pServer.client.Commands.CmdChain;
 import objectIO.markupMsg.MarkupMsg;
 
 public class ClientHub extends ConnectionHub<ClientConnection> {

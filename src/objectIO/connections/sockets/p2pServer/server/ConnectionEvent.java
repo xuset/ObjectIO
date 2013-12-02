@@ -1,4 +1,4 @@
-package objectIO.connections.p2pServer.server;
+package objectIO.connections.sockets.p2pServer.server;
 
 public interface ConnectionEvent {
 	void onConnect(P2PServer s, ServerConnection c);

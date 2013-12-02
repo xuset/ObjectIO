@@ -1,4 +1,4 @@
-package objectIO.connections.p2pServer.server;
+package objectIO.connections.sockets.p2pServer.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,8 +8,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
-import objectIO.connections.p2pServer.CmdCrafter;
-import objectIO.connections.p2pServer.P2PMsg;
+import objectIO.connections.sockets.p2pServer.CmdCrafter;
+import objectIO.connections.sockets.p2pServer.P2PMsg;
 
 public class P2PServer {
 	private ServerSocket socket;

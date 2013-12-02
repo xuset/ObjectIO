@@ -1,7 +1,7 @@
-package objectIO.connections.p2pServer.client;
+package objectIO.connections.sockets.p2pServer.client;
 
-import objectIO.connections.p2pServer.CmdCrafter;
-import objectIO.connections.p2pServer.P2PMsg;
+import objectIO.connections.sockets.p2pServer.CmdCrafter;
+import objectIO.connections.sockets.p2pServer.P2PMsg;
 import objectIO.markupMsg.MarkupMsg;
 class Commands {
 	

@@ -1,9 +1,9 @@
-package objectIO.connections.p2pServer.client;
+package objectIO.connections.sockets.p2pServer.client;
 
 import java.util.ArrayList;
 
 import objectIO.connections.Connection;
-import objectIO.connections.p2pServer.P2PMsg;
+import objectIO.connections.sockets.p2pServer.P2PMsg;
 import objectIO.markupMsg.MarkupMsg;
 
 public class ClientConnection extends Connection {

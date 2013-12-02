@@ -1,4 +1,4 @@
-package objectIO.connections.p2pServer;
+package objectIO.connections.sockets.p2pServer;
 
 import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;

@@ -1,4 +1,4 @@
-package objectIO.connections.p2pServer.client;
+package objectIO.connections.sockets.p2pServer.client;
 
 import java.io.IOException;
 import java.io.InputStream;

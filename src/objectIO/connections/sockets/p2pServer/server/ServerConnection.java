@@ -1,10 +1,10 @@
-package objectIO.connections.p2pServer.server;
+package objectIO.connections.sockets.p2pServer.server;
 
 import java.io.IOException;
 import java.net.Socket;
 
 import objectIO.connections.StreamCon;
-import objectIO.connections.p2pServer.P2PMsg;
+import objectIO.connections.sockets.p2pServer.P2PMsg;
 
 public class ServerConnection extends StreamCon{
 	private P2PServer server;
