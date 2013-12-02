@@ -1,14 +1,13 @@
 package objectIO.markupMsg;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import objectIO.markupMsg.MsgAttribute;
 
 class HeaderParser {
 	String name;
-	LinkedList<MsgAttribute> msgAttributes = new LinkedList<MsgAttribute>();
 	
-	HeaderParser(String input) throws InvalidFormatException{
+	HeaderParser(String input, List<MsgAttribute> msgAttributes) throws InvalidFormatException{
 		String[] split = input.split(":");
 		if (split.length == 0)
 			name = "";

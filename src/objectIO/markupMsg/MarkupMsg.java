@@ -33,11 +33,9 @@ public class MarkupMsg{
 	
 	protected void parse(String input, int nestedLevels) {
 		try {
-			DataParser parser = new DataParser(input, nestedLevels);
+			DataParser parser = new DataParser(input, nestedLevels, child, attribute);
 			name = parser.header.name;
-			attribute = parser.header.msgAttributes;
 			content = parser.body.content;
-			child = parser.body.child;
 		} catch (InvalidFormatException ex) {
 			goodFormat = false;
 			ex.printStackTrace();

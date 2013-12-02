@@ -1,12 +1,11 @@
 package objectIO.markupMsg;
 
-import java.util.LinkedList;
+import java.util.List;
 
 class BodyParser {
-	LinkedList<MarkupMsg> child = new LinkedList<MarkupMsg>();
 	String content = "";
 	
-	BodyParser(String input, int nestedLevels) throws InvalidFormatException {
+	BodyParser(String input, int nestedLevels, List<MarkupMsg> child) throws InvalidFormatException {
 		int firstTag = input.indexOf("<");
 		if (firstTag != -1 && nestedLevels > 0)
 			content = input.substring(0, firstTag).trim();
