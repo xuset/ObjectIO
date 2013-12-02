@@ -17,6 +17,7 @@ public class ServerConnection extends StreamCon{
 		this.server = server;
 		this.socket = socket;
 		socket.setKeepAlive(true);
+		socket.setTcpNoDelay(true);
 		myId = server.id;
 		if (sendMeetAndGreet(3000) == false) {
 			close();

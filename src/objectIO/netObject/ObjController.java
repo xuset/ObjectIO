@@ -58,7 +58,7 @@ public class ObjController implements ObjControllerI, Runnable{
 	private void distrubute(Connection c) {
 		Queue<MarkupMsg> queue = c.msgQueue();
 		MarkupMsg msg = null;
-		while ((msg = queue.poll()) != null) {
+		while (run && (msg = queue.poll()) != null) {
 			NetObject obj = objects.get(msg.name);
 			if (obj != null)
 				obj.parseUpdate(msg, c);
