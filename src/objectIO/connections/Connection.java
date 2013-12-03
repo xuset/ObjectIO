@@ -22,7 +22,8 @@ public abstract class Connection{
 	public boolean msgAvailable() { return (messageQueue.isEmpty() == false); }
 	
 	public Connection(Hub<?> hub) {
-		this.myId = hub.getId();
+		if (hub != null)
+			this.myId = hub.getId();
 	}
 	
 	public Connection() { }

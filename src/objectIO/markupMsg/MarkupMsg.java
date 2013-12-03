@@ -10,8 +10,8 @@ public class MarkupMsg{
 	
 	protected boolean goodFormat = true;
 
-	public List<MsgAttribute> attribute;
-	public List<MarkupMsg> child;
+	public List<MsgAttribute> attribute = new LinkedList<MsgAttribute>();
+	public List<MarkupMsg> child = new LinkedList<MarkupMsg>();
 	public String content = "";
 	public String name = "";
 	
@@ -19,8 +19,7 @@ public class MarkupMsg{
 	public boolean parsedProperly() { return goodFormat; }
 	
 	public MarkupMsg() {
-		attribute = new LinkedList<MsgAttribute>();
-		child = new LinkedList<MarkupMsg>();
+		
 	}
 	
 	public MarkupMsg(String toParse, int nestedLevels) {

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import objectIO.markupMsg.MarkupMsg;
 import objectIO.markupMsg.MsgAttribute;
@@ -13,8 +12,8 @@ import objectIO.markupMsg.MsgAttribute;
 public class StreamCon extends Connection{
 	private static final byte[] newLine = new byte[] { 13 };
 	
-	private BufferedReader in;
-	private OutputStream out;
+	private final BufferedReader in;
+	private final OutputStream out;
 	private InputListener listener;
 	private boolean isClosed = false;
 	
@@ -22,34 +21,15 @@ public class StreamCon extends Connection{
 	
 	public static interface InputParser { void parseInput(String input); }
 	
-	public StreamCon(Socket s, Hub<?> hub) throws IOException {
-		super(hub);
-		construct(s);
-	}
-	
-	public StreamCon(Socket s) throws IOException {
-		construct(s);
-	}
-	
-	private void construct(Socket s) throws IOException {
-		InputStream in = s.getInputStream();
-		OutputStream out = s.getOutputStream();
-		construct(in, out);
-	}
-	
 	public StreamCon(InputStream in, OutputStream out, Hub<?> hub) {
 		super(hub);
-		construct(in, out);
-	}
-	
-	public StreamCon(InputStream in, OutputStream out) {
-		construct(in, out);
-	}
-	
-	private void construct(InputStream in, OutputStream out) {
 		this.in = new BufferedReader(new InputStreamReader(in));
 		this.out = out;
 		parser = parseInput;
+	}
+	
+	public StreamCon(InputStream in, OutputStream out) {
+		this(in, out, null);
 	}
 	
 	public boolean isClosed() { return isClosed; }
@@ -79,7 +59,8 @@ public class StreamCon extends Connection{
 	
 	public void close() {
 		isClosed = true;
-		listener.stopListening();
+		if (listener != null)
+			listener.stopListening();
 		try {
 			in.close();
 			out.close();

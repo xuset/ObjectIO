@@ -17,7 +17,7 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	
 	public ClientHub(String ip, int port, long id) throws IOException {
 		super(id);
-		comm = ClientComm.connect(ip, port, this);
+		comm = new ClientComm(ip, port, this);
 		cmdChain = new Commands.CmdConnect(this);
 		cmdChain.append(
 				new Commands.CmdDisconnect(this)).append(

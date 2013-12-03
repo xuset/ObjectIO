@@ -3,19 +3,15 @@ package objectIO.connections.sockets.p2pServer.server;
 import java.io.IOException;
 import java.net.Socket;
 
-import objectIO.connections.StreamCon;
+import objectIO.connections.sockets.TCPCon;
 import objectIO.connections.sockets.p2pServer.P2PMsg;
 
-public class ServerConnection extends StreamCon{
+public class ServerConnection extends TCPCon{
 	private P2PServer server;
-	private Socket socket;
-	
-	public String getAddress() { return socket.getInetAddress().getHostAddress(); }
 	
 	public ServerConnection(Socket socket, P2PServer server) throws IOException {
 		super(socket);
 		this.server = server;
-		this.socket = socket;
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
 		myId = server.id;
@@ -42,16 +38,5 @@ public class ServerConnection extends StreamCon{
 	public void disconnect() {
 		close();
 		server.disconnect(this);
-	}
-	
-	public void close() {
-		try {
-			socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (isClosed() == false)
-			super.close();
-	}
-	
+	}	
 }
