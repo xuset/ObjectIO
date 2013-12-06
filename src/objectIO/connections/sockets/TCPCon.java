@@ -35,7 +35,6 @@ public class TCPCon extends StreamCon {
 		super(in, out, hub);
 		socket = s;
 		sendMeetAndGreet(3000);
-		startListening();
 	}
 	
 	public static TCPCon CREATE(Socket s) {
