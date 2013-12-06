@@ -107,8 +107,12 @@ public class StreamCon extends Connection{
 	private InputParser parseInput = new InputParser() {
 		@Override
 		public void parseInput(String input) {
-			MarkupMsg m = new MarkupMsg(input);
-			messageQueue.add(m);
+			if (input == null)
+				close();
+			else {
+				MarkupMsg m = new MarkupMsg(input);
+				messageQueue.add(m);
+			}
 		}
 	};
 	
@@ -125,7 +129,7 @@ public class StreamCon extends Connection{
 		
 		public void run() {
 			stopListening = false;
-			while (true) {
+			while (!stopListening && !isClosed) {
 				try {
 					String raw = in.readLine();
 					//System.out.println(myId + " recieved: " + raw);
@@ -134,7 +138,6 @@ public class StreamCon extends Connection{
 					if (stopListening == false) {
 						System.err.println(e.getMessage() + " in stream connection");
 						parser.parseInput(null);
-						close();
 					}
 					return;
 				}

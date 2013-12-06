@@ -34,6 +34,8 @@ public class TCPCon extends StreamCon {
 	private TCPCon(Socket s, InputStream in, OutputStream out, Hub<?> hub) {
 		super(in, out, hub);
 		socket = s;
+		sendMeetAndGreet(3000);
+		startListening();
 	}
 	
 	public static TCPCon CREATE(Socket s) {
@@ -53,12 +55,17 @@ public class TCPCon extends StreamCon {
 	
 	@Override
 	public void close() {
-		super.close();
 		try {
-			socket.close();
+			if (!socket.isInputShutdown())
+				socket.shutdownInput();
+			if (!socket.isOutputShutdown())
+				socket.shutdownOutput();
+			if (!socket.isClosed())
+				socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		super.close();
 	}
 	
 	@Override
