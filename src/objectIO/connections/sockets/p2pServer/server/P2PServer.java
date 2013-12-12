@@ -19,6 +19,8 @@ public class P2PServer {
 	public ConnectionEvent event = null;
 	public long id = 2l;
 	
+	public int getPort() { return socket.getLocalPort(); }
+	
 	public P2PServer(int port) throws IOException {
 		socket = new ServerSocket(port);
 		accepter = new SocketAccept();
