@@ -28,7 +28,7 @@ class DataParser {
 				end = i;
 		}
 		if (end == -1 || beginning == -1)
-			throw new InvalidFormatException();
+			throw new InvalidFormatException(input);
 		endOfHeader = end;
 		String s = input.substring(beginning + 1, end);
 		return new HeaderParser(s, msgAttributes);

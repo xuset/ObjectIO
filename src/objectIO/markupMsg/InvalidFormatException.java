@@ -6,4 +6,8 @@ public class InvalidFormatException extends Exception{
 	InvalidFormatException() {
 		super("Invalid Format");
 	}
+	
+	InvalidFormatException(String msg) {
+		super("Invalid format: " + msg);
+	}
 }

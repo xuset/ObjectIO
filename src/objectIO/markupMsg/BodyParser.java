@@ -50,7 +50,7 @@ class BodyParser {
 			}
 		}
 		if (openTags != closedTags) {
-			throw new InvalidFormatException();
+			throw new InvalidFormatException(input);
 		}
 		
 		
