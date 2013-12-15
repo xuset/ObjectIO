@@ -20,7 +20,10 @@ public class NetClass extends NetObject implements ObjControllerI{
 	protected void parseUpdate(MarkupMsg msg,  Connection c) {
 		for (MarkupMsg child : msg.child) {
 			NetObject obj = objects.get(child.name);
-			obj.parseUpdate(child, c);
+			if (obj == null)
+				System.out.println("Missing: " + msg.name + " content:" + msg.toString());
+			else
+				obj.parseUpdate(child, c);
 		}
 	}
 
