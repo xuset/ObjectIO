@@ -15,6 +15,8 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	
 	public ConnectionEvent conEvent = null;
 	
+	public boolean isConnectedToServer() { return comm.isConnected(); }
+	
 	public ClientHub(String ip, int port, long id) throws IOException {
 		super(id);
 		comm = new ClientComm(ip, port, this);

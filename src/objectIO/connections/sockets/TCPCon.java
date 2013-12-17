@@ -70,7 +70,7 @@ public class TCPCon extends StreamCon {
 	@Override
 	public boolean isClosed() { return super.isClosed() && socket.isClosed(); }
 	
-	public boolean isConnected() { return isClosed() && socket.isConnected(); }
+	public boolean isConnected() { return !isClosed() && socket.isConnected(); }
 	
 
 }
