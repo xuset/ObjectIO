@@ -9,7 +9,7 @@ public interface Hub <T extends Connection> {
 	public T getConnection(long endPointid);
 	public long getId();
 	
-	public boolean addConnection(T connection); //TODO contemplate removing this hmmmmmm
+	public boolean addConnection(T connection);
 	public boolean sendMsg(MarkupMsg message, long endPointId);
 	public boolean broadcastMsg(MarkupMsg message);
 }
