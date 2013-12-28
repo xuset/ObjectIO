@@ -42,6 +42,13 @@ public abstract class NetVar <T> extends NetObject {
 			oldValue = value;
 		}
 	}
+	
+	@Override
+	public MarkupMsg getValue() {
+		MarkupMsg msg = new MarkupMsg();
+		msg.content = toString();
+		return msg;
+	}
 
 	@Override
 	protected void parseUpdate(MarkupMsg msg, Connection c) {

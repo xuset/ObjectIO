@@ -22,4 +22,8 @@ public abstract class NetObject {
 		controller.unsyncObject(this);
 	}
 	
+	public MarkupMsg getValue() {
+		return null;
+	}
+	
 }

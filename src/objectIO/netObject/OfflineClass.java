@@ -8,7 +8,18 @@ public class OfflineClass extends NetClass {
 	public OfflineClass() {
 		super(null, null, 0);
 	}
-	
+
+	@Override
+	public MarkupMsg getValue() { return new MarkupMsg(); }
+
+	@Override
+	public void clearUpdateBuffer() { }
+
+	@Override
+	public void setValue(MarkupMsg msg) { }
+
+	@Override
+	public void distributeRecievedUpdates() { }
 
 	@Override
 	protected void parseUpdate(MarkupMsg msg,  Connection c) { }

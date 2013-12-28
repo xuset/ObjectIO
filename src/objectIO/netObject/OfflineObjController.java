@@ -19,4 +19,9 @@ public class OfflineObjController implements ObjControllerI{
 				
 	}
 
+	@Override
+	public void distributeRecievedUpdates() {
+		
+	}
+
 }

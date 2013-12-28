@@ -1,6 +1,8 @@
 package objectIO.netObject;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
@@ -11,7 +13,7 @@ public class NetClass extends NetObject implements ObjControllerI{
 	private long currentConnection = -1;
 	public boolean autoUpdate = false;
 	
-	public NetClass(ObjController controller, String name, int size) {
+	public NetClass(ObjControllerI controller, String name, int size) {
 		super(controller, name);
 		objects = new LinkedHashMap<String, NetObject>(size);
 	}
@@ -57,10 +59,41 @@ public class NetClass extends NetObject implements ObjControllerI{
 			flushBuffer();
 	}
 	
+	@Override
+	public MarkupMsg getValue() {
+		MarkupMsg msg = new MarkupMsg();
+		Iterator<Entry<String, NetObject>> it = objects.entrySet().iterator();
+		while (it.hasNext()) {
+			NetObject next = it.next().getValue();
+			MarkupMsg value = next.getValue();
+			value.name = next.id;
+			if (value != null)
+				msg.child.add(value);
+		}
+		return msg;
+	}
+	
+	public void clearUpdateBuffer() {
+		buffer = new MarkupMsg();
+	}
+	
+	public void setValue(MarkupMsg msg) {
+		if (msg == null)
+			return;
+		
+		for (MarkupMsg c : msg.child) {
+			String id = c.name;
+			objects.get(id).parseUpdate(c, null);
+		}
+	}
+	
 	private void flushBuffer() {
 		if (buffer.child.isEmpty())
 			return;
 		controller.sendUpdate(buffer, this, currentConnection);
 		buffer = new MarkupMsg();
 	}
+
+	@Override
+	public void distributeRecievedUpdates() { }
 }
