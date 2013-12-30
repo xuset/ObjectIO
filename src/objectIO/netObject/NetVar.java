@@ -16,7 +16,8 @@ public abstract class NetVar <T> extends NetObject {
 	};
 	
 	public boolean autoUpdate = true;
-	public OnChange<T> event = null;
+	private boolean fireEventOnLocalChange = false;
+	private OnChange<T> event = null;
 	
 	protected abstract T parse(String sValue);
 
@@ -24,6 +25,11 @@ public abstract class NetVar <T> extends NetObject {
 		super(controller, id);
 		value = initial;
 		oldValue = value;
+	}
+	
+	public void setEvent(boolean fireOnLocalChange, OnChange<T> event) {
+		this.fireEventOnLocalChange = fireOnLocalChange;
+		this.event = event;
 	}
 	
 	public void set(T newVal) {
@@ -40,6 +46,8 @@ public abstract class NetVar <T> extends NetObject {
 		if (needsUpdating()) {
 			sendUpdate(toString());
 			oldValue = value;
+			if (fireEventOnLocalChange && event != null)
+				event.onChange(this, null);
 		}
 	}
 	
