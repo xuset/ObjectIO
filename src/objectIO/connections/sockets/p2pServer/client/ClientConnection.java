@@ -18,8 +18,17 @@ public class ClientConnection extends Connection {
 		resetOutputBuffer();
 	}
 
-	boolean sendRawMsg(P2PMsg msg) {
-		return hub.comm.sendMsg(msg);
+	public void disconnect() {
+		synchronized(hub.getAllConnections()) {
+			hub.getAllConnections().remove(this);
+		}
+		if (hub.conEvent != null)
+			hub.conEvent.onDisconnection(hub, this);
+	}
+
+	public void flush() {
+		flushOutputBuffer();
+		hub.flush();
 	}
 
 	@Override
@@ -27,9 +36,8 @@ public class ClientConnection extends Connection {
 		return outputMsg.child.add(msg);
 	}
 
-	public void flush() {
-		flushOutputBuffer();
-		hub.flush();
+	protected boolean sendRawMsg(P2PMsg msg) {
+		return hub.comm.sendMsg(msg);
 	}
 	
 	boolean flushOutputBuffer() {
@@ -41,20 +49,12 @@ public class ClientConnection extends Connection {
 		return false;
 	}
 	
-	private void resetOutputBuffer() {
+	void resetOutputBuffer() {
 		outputBuffer.clear();
 		outputMsg = new P2PMsg();
 		outputMsg.to(endId);
 		outputMsg.from(getId());
 		outputMsg.child = outputBuffer;
-	}
-
-	public void disconnect() {
-		synchronized(hub.getAllConnections()) {
-			hub.getAllConnections().remove(this);
-		}
-		if (hub.conEvent != null)
-			hub.conEvent.onDisconnection(hub, this);
 	}
 
 }

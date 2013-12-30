@@ -24,6 +24,7 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 		cmdChain.append(
 				new Commands.CmdDisconnect(this)).append(
 				new Commands.CmdMsg(this));
+		addConnection(new BroadcastConnection(this));
 	}
 	
 	public ClientConnection getConnection(long id) {
@@ -41,8 +42,6 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	}
 	
 	public boolean sendMsg(MarkupMsg msg, long endId) {
-		if (endId == Connection.BROADCAST_CONNECTION)
-			return broadcastMsg(msg);
 		Connection c = getConnection(endId);
 		return c.sendMsg(msg);
 	}
