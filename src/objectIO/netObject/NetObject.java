@@ -4,8 +4,8 @@ import objectIO.connections.Connection;
 import objectIO.markupMsg.MarkupMsg;
 
 public abstract class NetObject {
-	protected ObjControllerI controller;
-	protected String id;
+	private ObjControllerI controller;
+	protected final String id;
 
 	protected abstract void parseUpdate(MarkupMsg msg, Connection c);
 	
@@ -19,11 +19,26 @@ public abstract class NetObject {
 	}
 	
 	public void remove() {
-		controller.unsyncObject(this);
+		if (controller != null)
+			controller.unsyncObject(this);
+		controller = null;
 	}
 	
 	public MarkupMsg getValue() {
 		return null;
 	}
+	
+	protected void sendUpdate(MarkupMsg data, long connectionId) {
+		if (controller != null)
+			controller.sendUpdate(data, this, connectionId);
+	}
+	
+	public void setController(ObjControllerI controller) {
+		remove();
+		this.controller = controller;
+		controller.syncObject(this);
+	}
+	
+	public boolean isSynced() { return controller != null; }
 	
 }

@@ -61,7 +61,7 @@ public abstract class NetVar <T> extends NetObject {
 	protected final void sendUpdate(String sValue) {
 		MarkupMsg msg = new MarkupMsg();
 		msg.content = sValue;
-		controller.sendUpdate(msg, this, Connection.BROADCAST_CONNECTION);
+		sendUpdate(msg, Connection.BROADCAST_CONNECTION);
 	}
 	
 	protected boolean needsUpdating() {

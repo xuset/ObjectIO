@@ -48,7 +48,7 @@ public class NetFunction extends NetObject {
 		MarkupMsg parent = new MarkupMsg();
 		parent.setAttribute("type", type);
 		parent.child.add(msg);
-		controller.sendUpdate(parent, this, connectionId);
+		sendUpdate(parent, connectionId);
 		
 	}
 }

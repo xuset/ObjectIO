@@ -90,7 +90,7 @@ public class NetClass extends NetObject implements ObjControllerI{
 	private void flushBuffer() {
 		if (buffer.child.isEmpty())
 			return;
-		controller.sendUpdate(buffer, this, currentConnection);
+		sendUpdate(buffer, currentConnection);
 		buffer = new MarkupMsg();
 	}
 

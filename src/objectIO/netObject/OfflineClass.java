@@ -9,14 +9,14 @@ public class OfflineClass extends NetClass {
 		super(null, null, 0);
 	}
 
-	@Override
-	public MarkupMsg getValue() { return new MarkupMsg(); }
+	//@Override
+	//public MarkupMsg getValue() { return new MarkupMsg(); }
 
 	@Override
 	public void clearUpdateBuffer() { }
 
-	@Override
-	public void setValue(MarkupMsg msg) { }
+	//@Override
+	//public void setValue(MarkupMsg msg) { }
 
 	@Override
 	public void distributeRecievedUpdates() { }
@@ -24,11 +24,11 @@ public class OfflineClass extends NetClass {
 	@Override
 	protected void parseUpdate(MarkupMsg msg,  Connection c) { }
 
-	@Override
-	public boolean syncObject(NetObject obj) { return true; }
+	//@Override
+	//public boolean syncObject(NetObject obj) { return true; }
 
-	@Override
-	public boolean unsyncObject(NetObject obj) { return true; }
+	//@Override
+	//public boolean unsyncObject(NetObject obj) { return true; }
 
 	@Override
 	public void sendUpdate(MarkupMsg msg, NetObject obj, long connectionId) { }
@@ -38,5 +38,11 @@ public class OfflineClass extends NetClass {
 	
 	@Override
 	public void remove() { }
+
+	@Override
+	protected void sendUpdate(MarkupMsg data, long connectionId) { }
+
+	@Override
+	public void setController(ObjControllerI controller) { }
 
 }
