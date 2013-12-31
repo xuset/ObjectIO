@@ -3,6 +3,7 @@ package objectIO.connections.sockets;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
 
 import objectIO.connections.ConnectionHub;
 import objectIO.connections.StreamCon;
@@ -23,6 +24,16 @@ public class TCPHub extends ConnectionHub<TCPCon> {
 		acceptor.stop();
 		for (StreamCon c : connections)
 			c.close();
+	}
+	
+	public void removeAllDisconnected() {
+		for (Iterator<TCPCon> it = connections.iterator(); it.hasNext(); ) {
+			TCPCon c = it.next();
+			if(!c.isConnected()) {
+				c.close();
+				it.remove();
+			}
+		}
 	}
 	
 	public class Acceptor implements Runnable{
@@ -55,8 +66,11 @@ public class TCPHub extends ConnectionHub<TCPCon> {
 			while (true) {
 				try {
 					Socket s = serverSocket.accept();
-					if (acceptAddress(s.getInetAddress().getHostAddress()))
-						addConnection(new TCPCon(s, TCPHub.this));
+					if (acceptAddress(s.getInetAddress().getHostAddress())) {
+						TCPCon con = new TCPCon(s, TCPHub.this);
+						con.startListening();
+						addConnection(con);
+					}
 					else
 						s.close();
 				} catch (IOException e) {

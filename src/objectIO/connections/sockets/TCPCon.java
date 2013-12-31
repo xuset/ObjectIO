@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import objectIO.connections.Hub;
@@ -71,6 +72,10 @@ public class TCPCon extends StreamCon {
 	public boolean isClosed() { return super.isClosed() && socket.isClosed(); }
 	
 	public boolean isConnected() { return !isClosed() && socket.isConnected(); }
+	
+	public void setTcpNoDelay(boolean set) throws SocketException { socket.setTcpNoDelay(set); }
+	
+	public void setTcpKeepAlive(boolean set) throws SocketException { socket.setKeepAlive(set); }
 	
 
 }
