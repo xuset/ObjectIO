@@ -67,8 +67,12 @@ public class FileCon extends Connection{
 	public boolean readNextLine() {
 		try {
 			String s = reader.readLine();
-			if (s != null)
-				return msgQueue().add(new MarkupMsg(s));
+			if (s != null) {
+				MarkupMsg msg = new MarkupMsg(s);
+				if (msg.parsedProperly())
+					msgQueue().add(msg);
+				return true;
+			}
 			return false;
 		} catch (IOException e) {
 			e.printStackTrace();

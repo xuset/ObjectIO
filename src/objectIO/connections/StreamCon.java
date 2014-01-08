@@ -111,7 +111,8 @@ public class StreamCon extends Connection{
 				close();
 			else {
 				MarkupMsg m = new MarkupMsg(input);
-				messageQueue.add(m);
+				if (m.parsedProperly())
+					messageQueue.add(m);
 			}
 		}
 	};

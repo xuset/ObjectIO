@@ -36,7 +36,8 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	void parseInput(String input) {
 		if (input != null) {
 			P2PMsg msg = new P2PMsg(input);
-			cmdChain.handOff(msg);
+			if (msg.parsedProperly())
+				cmdChain.handOff(msg);
 		} else
 			shutdown();
 	}
