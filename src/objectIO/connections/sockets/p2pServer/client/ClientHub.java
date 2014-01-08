@@ -35,9 +35,13 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	
 	void parseInput(String input) {
 		if (input != null) {
-			P2PMsg msg = new P2PMsg(input);
-			if (msg.parsedProperly())
-				cmdChain.handOff(msg);
+			if (input == "") {
+				System.err.println("Client recieved empty string!");
+			} else {
+				P2PMsg msg = new P2PMsg(input);
+				if (msg.parsedProperly())
+					cmdChain.handOff(msg);
+			}
 		} else
 			shutdown();
 	}

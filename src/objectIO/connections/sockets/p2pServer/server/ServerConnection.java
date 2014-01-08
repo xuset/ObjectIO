@@ -40,4 +40,10 @@ public class ServerConnection extends TCPCon{
 		close();
 		server.disconnect(this);
 	}	
+	
+	@Override
+	public void close() {
+		super.close();
+		server.disconnect(this);
+	}
 }
