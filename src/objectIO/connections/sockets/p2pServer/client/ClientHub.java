@@ -19,11 +19,11 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	
 	public ClientHub(String ip, int port, long id) throws IOException {
 		super(id);
-		comm = new ClientComm(ip, port, this);
 		cmdChain = new Commands.CmdConnect(this);
 		cmdChain.append(
 				new Commands.CmdDisconnect(this)).append(
 				new Commands.CmdMsg(this));
+		comm = new ClientComm(ip, port, this);
 		addConnection(new BroadcastConnection(this));
 	}
 	
