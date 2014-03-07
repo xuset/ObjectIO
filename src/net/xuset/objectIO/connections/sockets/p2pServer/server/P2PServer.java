@@ -87,6 +87,9 @@ public class P2PServer {
 	}
 	
 	public void shutdown() {
+		accepter.stop();
+		while (accepter.isStopped() == false)
+			Thread.yield();
 		synchronized(connections) {
 			for (ServerConnection c : connections)
 				c.close();
@@ -94,9 +97,6 @@ public class P2PServer {
 		}
 		if (event != null && connections.isEmpty())
 			event.onLastDisconnect(this);
-		accepter.stop();
-		while (accepter.isStopped() == false)
-			Thread.yield();
 		try {
 			socket.close();
 		} catch (IOException e) {
