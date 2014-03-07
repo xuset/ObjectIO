@@ -12,6 +12,8 @@ class ScannerWorker {
 	private final byte[] startAddr;
 	private final HostChecker hostChecker;
 	
+	private boolean cancelScan = false;
+	
 	boolean isWorking() { return thread.isAlive(); }
 	
 	List<InetAddress> getHosts() {
@@ -32,22 +34,34 @@ class ScannerWorker {
 		thread.start();
 	}
 	
+	void setCancelScanFlag() {
+		cancelScan = true;
+	}
+	
+	void joinThread() {
+		if (thread.isAlive()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	private class Worker implements Runnable {
 		@Override
 		public void run() {
-			for (byte i = 0; i < hostsToScan; i++) {
+			for (byte i = 0; i < hostsToScan && !cancelScan; i++) {
 				startAddr[3]++;
 				InetAddress testAddr = constructAddress(startAddr);
 				if (testAddr == null)
 					continue;
-				System.out.println("Testing " + testAddr.getHostAddress());
+				//System.out.println("Testing: " + testAddr.getHostAddress());
 				if (hostChecker.isUp(testAddr)) {
-		            System.out.println("Added " + testAddr.getHostAddress());
-		            hosts.add(testAddr);
+					//System.out.println("    Adding: " + testAddr.getHostAddress());
+					hosts.add(testAddr);
 				}
-				
 			}
-			System.out.println("Scanner finished");
 		}
 	}
 		
@@ -55,6 +69,7 @@ class ScannerWorker {
 		try {
 			return InetAddress.getByAddress(addr);
 		} catch (UnknownHostException ex) {
+			//ex.printStackTrace();
 			//Do nothing
 		}
 		return null;

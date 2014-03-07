@@ -32,7 +32,7 @@ public class NetworkPing implements HostChecker{
 		try {
 			return addr.isReachable(timeout);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			//Do nothing
 		}
 		return false;
 	}

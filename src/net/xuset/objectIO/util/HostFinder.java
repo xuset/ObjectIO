@@ -10,7 +10,7 @@ public class HostFinder {
 	private final ArrayList<ScannerWorker> workers = new ArrayList<ScannerWorker>();
 	
 	public HostFinder(HostChecker checker) throws UnknownHostException {
-		this(checker, (byte) 10);
+		this(checker, 10);
 	}
 	
 	public HostFinder(HostChecker checker, int threads) throws UnknownHostException {
@@ -31,6 +31,16 @@ public class HostFinder {
 			
 			workers.add(new ScannerWorker(byteAddr, range, checker));
 			hostsLeft-= range;
+		}
+	}
+	
+	public void cancelScan() {
+		for (ScannerWorker w : workers) {
+			w.setCancelScanFlag();
+		}
+		
+		for (ScannerWorker w : workers) {
+			w.joinThread();
 		}
 	}
 	
