@@ -1,9 +1,13 @@
-package net.xuset.objectIO.util;
+package net.xuset.objectIO.util.scanners;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import net.xuset.objectIO.util.NetworkPing;
+
+import net.xuset.objectIO.util.scanners.HostChecker;
 
 public class HostCheckerPort implements HostChecker {
 	private final int port, timeout;

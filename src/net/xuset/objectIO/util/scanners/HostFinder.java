@@ -1,9 +1,12 @@
-package net.xuset.objectIO.util;
+package net.xuset.objectIO.util.scanners;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.xuset.objectIO.util.scanners.HostChecker;
+import net.xuset.objectIO.util.scanners.ScannerWorker;
 
 public class HostFinder {
 	private final int max = 254;

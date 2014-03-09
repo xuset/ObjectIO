@@ -1,4 +1,4 @@
-package net.xuset.objectIO.util;
+package net.xuset.objectIO.util.scanners;
 
 import java.net.InetAddress;
 

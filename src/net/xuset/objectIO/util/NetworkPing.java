@@ -3,6 +3,8 @@ package net.xuset.objectIO.util;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import net.xuset.objectIO.util.scanners.HostChecker;
+
 public class NetworkPing implements HostChecker{
 	private static final int defaultTimeout = 500;
 	

@@ -1,9 +1,11 @@
-package net.xuset.objectIO.util;
+package net.xuset.objectIO.util.scanners;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.xuset.objectIO.util.scanners.HostChecker;
 
 class ScannerWorker {
 	private final Thread thread;
