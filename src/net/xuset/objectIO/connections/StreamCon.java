@@ -82,28 +82,57 @@ public class StreamCon extends Connection{
 			listener.stopListening();
 		listener = null;
 	}
-
+	
 	@Override
 	public boolean sendMeetAndGreet(long delay) {
+		final long startTime = System.currentTimeMillis();
 		final String attributeName = "new connection";
-		MarkupMsg m = new MarkupMsg();
+		final char[] buffer = new char[1024];
+		final MarkupMsg m = new MarkupMsg();
 		m.addAttribute(MsgAttribute.cre(attributeName).set(myId));
+		
+		
 		try {
 			out.write(m.toString().getBytes());
 			out.write(newLine);
 			out.flush();
-			String rx = in.readLine();
-			MarkupMsg rMsg = new MarkupMsg(rx);
-			MsgAttribute na = rMsg.getAttribute(attributeName);
-			if (na != null) {
-				endId = na.getLong();
-				return true;
+			
+			int offset = 0;
+			while (startTime + delay > System.currentTimeMillis() &&
+					offset < buffer.length) {
+				
+				if (!in.ready()) {
+					try { Thread.sleep(1); } catch (InterruptedException ex) { }
+					continue;
+				}
+				
+				
+				int read = in.read();
+				if (read != -1) {
+					buffer[offset] = (char) read;
+					offset++;
+					if ((byte) read == newLine[0])
+						break;
+				} else {
+					break;
+				}
+				
 			}
+			
+			String recieved = new String(buffer);
+			MarkupMsg recievedMsg = new MarkupMsg(recieved);
+			if (recievedMsg.parsedProperly()) {
+				MsgAttribute na = recievedMsg.getAttribute(attributeName);
+				if (na != null) {
+					endId = na.getLong();
+					return true;
+				}
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		
 		return false;
 	}
 	
