@@ -52,6 +52,8 @@ public class ClientHub extends ConnectionHub<ClientConnection> {
 	@Override
 	public boolean sendMsg(MarkupMsg msg, long endId) {
 		Connection c = getConnection(endId);
+		if (c == null)
+			return false;
 		return c.sendMsg(msg);
 	}
 	
