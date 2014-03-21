@@ -86,19 +86,36 @@ public class P2PServer {
 		}
 	}
 	
-	public void shutdown() {
-		accepter.stop();
-		while (accepter.isStopped() == false)
-			Thread.yield();
-		synchronized(connections) {
-			for (ServerConnection c : connections)
-				c.close();
-			connections.clear();
+	public void disconnectAll() {
+		while (!connections.isEmpty()) {
+			ServerConnection c;
+			synchronized(connections) { c = connections.get(0); }
+			c.disconnect();
 		}
+	}
+	
+	private void stopAndWaitForAccepter() {
+		if (accepter == null)
+			return;
+		
+		accepter.stop();
+		if (accepter.thread != null && !accepter.isStopped()) {
+			try {
+				accepter.thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void shutdown() {
+		stopAndWaitForAccepter();
+		disconnectAll();
 		if (event != null && connections.isEmpty())
 			event.onLastDisconnect(this);
 		try {
-			socket.close();
+			if (!socket.isClosed())
+				socket.close();
 		} catch (IOException e) {
 			System.err.println(e.getMessage() + " in ServerSocket");
 		}
