@@ -4,44 +4,45 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import net.xuset.objectIO.connections.Connection;
+import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 
 
-public class NetClass extends NetObject implements ObjControllerI{
+public class NetClass extends NetObject implements NetObjUpdater{
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
+	
 	public boolean autoUpdate = false;
 	
-	public NetClass(ObjControllerI controller, String name, int size) {
+	public NetClass(NetObjUpdater controller, String name, int size) {
 		super(controller, name);
 		objects = new LinkedHashMap<String, NetObject>(size);
 	}
 
 	@Override
-	protected void parseUpdate(MarkupMsg msg,  Connection c) {
-		for (MarkupMsg child : msg.child) {
-			NetObject obj = objects.get(child.name);
+	protected void parseUpdate(MarkupMsg msg,  ConnectionI c) {
+		for (MarkupMsg child : msg.getNestedMsgs()) {
+			NetObject obj = objects.get(child.getName());
 			if (obj == null)
-				System.out.println("Missing: " + msg.name + " content:" + msg.toString());
+				System.out.println("Missing: " + msg.getName() + " content:" + msg.toString());
 			else
 				obj.parseUpdate(child, c);
 		}
 	}
 
 	@Override
-	public boolean syncObject(NetObject obj) {
-		if (objects.containsKey(obj.id))
-			throw new HashMapKeyCollision(obj.id + " has already been used");
-		boolean ret = (objects.put(obj.id, obj) == null);
+	public boolean registerNetObj(NetObject obj) {
+		if (objects.containsKey(obj.getId()))
+			throw new HashMapKeyCollision(obj.getId() + " has already been used");
+		boolean ret = (objects.put(obj.getId(), obj) == null);
 		return ret;
 	}
 
 		@Override
-	public boolean unsyncObject(NetObject obj) {
-		return (objects.remove(obj.id) != null);
+	public boolean unregisterNetObj(NetObject obj) {
+		return (objects.remove(obj.getId()) != null);
 	}
 
 	@Override
@@ -50,14 +51,14 @@ public class NetClass extends NetObject implements ObjControllerI{
 			flushBuffer();
 			currentConnection = connectionId;
 		}
-		msg.name = obj.id;
-		buffer.child.add(msg);
+		msg.setName(obj.getId());
+		buffer.addNested(msg);
 		if (autoUpdate)
 			flushBuffer();
 	}
 
 	public void update() {
-		if (buffer.child.isEmpty() == false)
+		if (buffer.getNestedMsgs().isEmpty() == false)
 			flushBuffer();
 	}
 	
@@ -68,9 +69,9 @@ public class NetClass extends NetObject implements ObjControllerI{
 		while (it.hasNext()) {
 			NetObject next = it.next().getValue();
 			MarkupMsg value = next.getValue();
-			value.name = next.id;
+			value.setName(next.getId());
 			if (value != null)
-				msg.child.add(value);
+				msg.addNested(value);
 		}
 		return msg;
 	}
@@ -83,19 +84,24 @@ public class NetClass extends NetObject implements ObjControllerI{
 		if (msg == null)
 			return;
 		
-		for (MarkupMsg c : msg.child) {
-			String id = c.name;
+		for (MarkupMsg c : msg.getNestedMsgs()) {
+			String id = c.getName();
 			objects.get(id).parseUpdate(c, null);
 		}
 	}
 	
 	private void flushBuffer() {
-		if (buffer.child.isEmpty())
+		if (buffer.getNestedMsgs().isEmpty())
 			return;
 		sendUpdate(buffer, currentConnection);
 		buffer = new MarkupMsg();
 	}
 
 	@Override
-	public void distributeRecievedUpdates() { }
+	public void distributeAllUpdates() { }
+
+	@Override
+	public boolean distributeUpdate(MarkupMsg msg, ConnectionI con) {
+		return false;
+	}
 }

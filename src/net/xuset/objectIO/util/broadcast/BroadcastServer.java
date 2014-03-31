@@ -6,7 +6,18 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 
-
+/**
+ * This class continually sends message in a multicast datagram packet on the given
+ * port and address group.
+ * 
+ * <p>This class is generally used with BroadcastClient objects on other hosts. This
+ * class sends String messages that are picked up the BroadcastClient objects.</p>
+ * 
+ * 
+ * @author xuset
+ * @see BroadcastClient
+ * @since 1.0
+ */
 public class BroadcastServer {
 	private static final int defaultDelay = 500;
 	
@@ -18,33 +29,46 @@ public class BroadcastServer {
 	private byte[] msg;
 	private boolean keepGoing = true;
 	
-	public BroadcastServer(int port, InetAddress group, String broadcastMsg)
-			throws SocketException {
-		this(port, group, broadcastMsg, defaultDelay);
-	}
 	
-	public BroadcastServer(int port, InetAddress group, String broadcastMsg, int delay)
-			throws SocketException {
-		
-		this(port, group, delay);
-		start(broadcastMsg);
-	}
-	
+	/**
+	 * Construct a new BroadcastServer with the given port and address group. To start
+	 * the message send call {@code start(String)}.
+	 * 
+	 * @param port the port to broadcast on
+	 * @param group the multicast address to use
+	 * @throws SocketException if the socket could not bind to the port or could not be
+	 * 			opened
+	 */
 	public BroadcastServer(int port, InetAddress group) throws SocketException {
 		this(port, group, defaultDelay);
 	}
 	
-	public BroadcastServer(int port, InetAddress group, int delay) throws SocketException {
+	
+	/**
+	 * Construct a new BroadcastServer with the given port and address group. To start
+	 * the message send call {@code start(String)}.
+	 * 
+	 * @param port the port to broadcast on
+	 * @param group the multicast address to use
+	 * @param delay the delay between sent messages in milliseconds
+	 * @throws SocketException if the socket could not bind to the port or could not be
+	 * 			opened
+	 */
+	public BroadcastServer(int port, InetAddress group, int delay)
+			throws SocketException {
+		
 		this.delay = delay;
 		this.port = port;
 		this.group = group;
 		socket = new DatagramSocket();
 	}
 	
-	public InetAddress getLocalAddress() {
-		return socket.getLocalAddress();
-	}
 	
+	/**
+	 * Starts the sending of the given message.
+	 * 
+	 * @param message the message to send
+	 */
 	public void start(String message) {
 		if (thread != null && thread.isAlive())
 			forceStop();
@@ -53,20 +77,33 @@ public class BroadcastServer {
 		thread.start();
 	}
 	
+	
+	/**
+	 * Sets the stop flag.
+	 */
 	public void stop() { keepGoing = false; }
+	
+	
+	/**
+	 * Indicates if the broadcast has stopped.
+	 * 
+	 * @return {@code true} if the broadcast is stopped
+	 */
 	public boolean isStopped() { return !thread.isAlive(); }
 	
 	private void forceStop() {
 		stop();
 		try {
 			thread.join(100);
+		} catch (InterruptedException e) {
 			if (thread.isAlive())
 				thread.interrupt();
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	
+	/** Worker class that sends the messages. */
 	private class Worker implements Runnable {
 		@Override
 		public void run() {
@@ -77,7 +114,6 @@ public class BroadcastServer {
 		            packet = new DatagramPacket(msg.clone(), msg.length, group, port);
 		            socket.send(packet);
 		            
-		            //System.out.println("broadcasted sent: " + new String(msg.clone()));
 		            try { Thread.sleep(delay); } catch(InterruptedException ex) { }
 					
 				}

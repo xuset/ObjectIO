@@ -1,16 +1,17 @@
 package net.xuset.objectIO.netObject;
 
+import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
-public class OfflineObjController implements ObjControllerI{
+public class OfflineObjController implements NetObjUpdater{
 
 	@Override
-	public boolean syncObject(NetObject obj) {
+	public boolean registerNetObj(NetObject obj) {
 		return true;
 	}
 
 	@Override
-	public boolean unsyncObject(NetObject obj) {
+	public boolean unregisterNetObj(NetObject obj) {
 		return true;
 	}
 
@@ -20,8 +21,13 @@ public class OfflineObjController implements ObjControllerI{
 	}
 
 	@Override
-	public void distributeRecievedUpdates() {
+	public void distributeAllUpdates() {
 		
+	}
+
+	@Override
+	public boolean distributeUpdate(MarkupMsg msg, ConnectionI con) {
+		return true;
 	}
 
 }

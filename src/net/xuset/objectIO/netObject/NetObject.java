@@ -1,44 +1,41 @@
 package net.xuset.objectIO.netObject;
 
-import net.xuset.objectIO.connections.Connection;
+import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 public abstract class NetObject {
-	private ObjControllerI controller;
-	protected final String id;
+	private NetObjUpdater updater;
+	private final String id;
 
-	protected abstract void parseUpdate(MarkupMsg msg, Connection c);
+	protected abstract void parseUpdate(MarkupMsg msg, ConnectionI c);
+	public abstract MarkupMsg getValue();
 	
 	public String getId() { return id; }
 	
-	public NetObject(ObjControllerI controller, String id) {
-		this.controller = controller;
+	public NetObject(NetObjUpdater updateer, String id) {
+		this.updater = updateer;
 		this.id = id;
-		if (controller != null)
-			controller.syncObject(this);
-	}
-	
-	public void remove() {
-		if (controller != null)
-			controller.unsyncObject(this);
-		controller = null;
-	}
-	
-	public MarkupMsg getValue() {
-		return null;
+		if (updateer != null)
+			updateer.registerNetObj(this);
 	}
 	
 	protected void sendUpdate(MarkupMsg data, long connectionId) {
-		if (controller != null)
-			controller.sendUpdate(data, this, connectionId);
+		if (updater != null)
+			updater.sendUpdate(data, this, connectionId);
 	}
 	
-	public void setController(ObjControllerI controller) {
-		remove();
-		this.controller = controller;
-		controller.syncObject(this);
+	public void setUpdater(NetObjUpdater updater) {
+		removeUpdater();
+		this.updater = updater;
+		updater.registerNetObj(this);
 	}
 	
-	public boolean isSynced() { return controller != null; }
+	public void removeUpdater() {
+		if (updater != null)
+			updater.unregisterNetObj(this);
+		updater = null;
+	}
+	
+	public boolean hasUpdater() { return updater != null; }
 	
 }

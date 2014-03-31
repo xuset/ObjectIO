@@ -7,6 +7,13 @@ import java.util.List;
 
 import net.xuset.objectIO.util.scanners.HostChecker;
 
+
+/**
+ * Class that scans a range of address on a seperate thread
+ * 
+ * @author xuset
+ * @since 1.0
+ */
 class ScannerWorker {
 	private final Thread thread;
 	private final List<InetAddress> hosts = new ArrayList<InetAddress>();
@@ -16,8 +23,19 @@ class ScannerWorker {
 	
 	private boolean cancelScan = false;
 	
+	/**
+	 * Indicates if the thread is still working
+	 * 
+	 * @return {@code true} if the thread is alive
+	 */
 	boolean isWorking() { return thread.isAlive(); }
 	
+	
+	/**
+	 * Returns the list of accepted addresses.
+	 * 
+	 * @return the list of address or an empty list if the worker is working
+	 */
 	List<InetAddress> getHosts() {
 		if (isWorking())
 			return new ArrayList<InetAddress>(0);
@@ -25,6 +43,14 @@ class ScannerWorker {
 			return hosts;
 	}
 	
+	
+	/**
+	 * Starts a new scan for the given address range.
+	 * 
+	 * @param startAddr address to start scan on
+	 * @param hostsToScan amount of hosts to scan
+	 * @param hostChecker used to determine if the address should be added to the list
+	 */
 	ScannerWorker(byte[] startAddr, int hostsToScan, HostChecker hostChecker) {
 		if (startAddr.length != 4)
 			throw new IllegalArgumentException("Must use ipv4 address");
@@ -36,10 +62,17 @@ class ScannerWorker {
 		thread.start();
 	}
 	
+	
+	/**
+	 * Sets the cancel flag. The thread will try to exit shortly after.
+	 */
 	void setCancelScanFlag() {
 		cancelScan = true;
 	}
 	
+	/**
+	 * Blocks until the thread dies.
+	 */
 	void joinThread() {
 		if (thread.isAlive()) {
 			try {
@@ -50,6 +83,10 @@ class ScannerWorker {
 		}
 	}
 	
+	
+	/**
+	 * Worker class that does the scanning
+	 */
 	private class Worker implements Runnable {
 		@Override
 		public void run() {
@@ -58,20 +95,18 @@ class ScannerWorker {
 				InetAddress testAddr = constructAddress(startAddr);
 				if (testAddr == null)
 					continue;
-				//System.out.println("Testing: " + testAddr.getHostAddress());
 				if (hostChecker.isUp(testAddr)) {
-					//System.out.println("    Adding: " + testAddr.getHostAddress());
 					hosts.add(testAddr);
 				}
 			}
 		}
 	}
-		
+	
+	
 	private static InetAddress constructAddress(byte[] addr) {
 		try {
 			return InetAddress.getByAddress(addr);
 		} catch (UnknownHostException ex) {
-			//ex.printStackTrace();
 			//Do nothing
 		}
 		return null;

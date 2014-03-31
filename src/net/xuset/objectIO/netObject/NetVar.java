@@ -1,9 +1,10 @@
 package net.xuset.objectIO.netObject;
 
 import net.xuset.objectIO.connections.Connection;
+import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 import net.xuset.objectIO.netObject.NetObject;
-import net.xuset.objectIO.netObject.ObjControllerI;
+import net.xuset.objectIO.netObject.NetObjUpdater;
 
 
 
@@ -12,8 +13,8 @@ public abstract class NetVar <T> extends NetObject {
 	protected T oldValue;
 	
 	public static interface OnChange<T> {
-		public void onChange(NetVar<T> var, Connection c);
-	};
+		public void onChange(NetVar<T> var, ConnectionI c);
+	}
 	
 	public boolean autoUpdate = true;
 	private boolean fireEventOnLocalChange = false;
@@ -21,7 +22,7 @@ public abstract class NetVar <T> extends NetObject {
 	
 	protected abstract T parse(String sValue);
 
-	public NetVar(T initial, String id, ObjControllerI controller) {
+	public NetVar(T initial, String id, NetObjUpdater controller) {
 		super(controller, id);
 		value = initial;
 		oldValue = value;
@@ -54,13 +55,13 @@ public abstract class NetVar <T> extends NetObject {
 	@Override
 	public MarkupMsg getValue() {
 		MarkupMsg msg = new MarkupMsg();
-		msg.content = toString();
+		msg.setContent(toString());
 		return msg;
 	}
 
 	@Override
-	protected void parseUpdate(MarkupMsg msg, Connection c) {
-		value = parse(msg.content);
+	protected void parseUpdate(MarkupMsg msg, ConnectionI c) {
+		value = parse(msg.getContent());
 		oldValue = value;
 		if (event != null)
 			event.onChange(this, c);
@@ -68,7 +69,7 @@ public abstract class NetVar <T> extends NetObject {
 	
 	protected final void sendUpdate(String sValue) {
 		MarkupMsg msg = new MarkupMsg();
-		msg.content = sValue;
+		msg.setContent(sValue);
 		sendUpdate(msg, Connection.BROADCAST_CONNECTION);
 	}
 	
@@ -88,7 +89,7 @@ public abstract class NetVar <T> extends NetObject {
 	//Integer
 	
 	public static class nInt extends NetVar<Integer> {
-		public nInt(Integer initial, String id, ObjControllerI controller) {
+		public nInt(Integer initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 		
@@ -101,7 +102,7 @@ public abstract class NetVar <T> extends NetObject {
 	//Boolean
 	
 	public static class nBool extends NetVar<Boolean> {
-		public nBool(Boolean initial, String id, ObjControllerI controller) {
+		public nBool(Boolean initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 
@@ -114,7 +115,7 @@ public abstract class NetVar <T> extends NetObject {
 	//Double
 	
 	public static class nDouble extends NetVar<Double> {
-		public nDouble(Double initial, String id, ObjControllerI controller) {
+		public nDouble(Double initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 
@@ -127,7 +128,7 @@ public abstract class NetVar <T> extends NetObject {
 	//Long
 	
 	public static class nLong extends NetVar<Long> {
-		public nLong(Long initial, String id, ObjControllerI controller) {
+		public nLong(Long initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 
@@ -140,7 +141,7 @@ public abstract class NetVar <T> extends NetObject {
 	//Float
 	
 	public static class nFloat extends NetVar<Float> {
-		public nFloat(Float initial, String id, ObjControllerI controller) {
+		public nFloat(Float initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 
@@ -153,7 +154,7 @@ public abstract class NetVar <T> extends NetObject {
 	//String
 	
 	public static class nString extends NetVar<String> {
-		public nString(String initial, String id, ObjControllerI controller) {
+		public nString(String initial, String id, NetObjUpdater controller) {
 			super(initial, id, controller);
 		}
 

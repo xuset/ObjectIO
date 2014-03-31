@@ -1,48 +1,122 @@
 package net.xuset.objectIO.markupMsg;
 
-import net.xuset.objectIO.netObject.NetVar;
 
+/**
+ * Class used by MarkupMsg for attributes.
+ * A MsgAttribute has a name, and value field.
+ * 
+ * @author xuset
+ *
+ */
 public class MsgAttribute {
-	public String name, value;
+	private final String name;
+	private String value;
 	
-	public MsgAttribute() { }
+	
+	/**
+	 * Constructs a MsgAttribute with the given name and an empty value.
+	 * 
+	 * @param name name of the attribute
+	 */
 	public MsgAttribute(String name) {
-		this.name = name;
-	}
-	public MsgAttribute(String name, String value) {
-		this.name = name;
-		this.value = value;
-	}
-	public MsgAttribute(NetVar<?> v) {
-		this.name = v.getId();
-		this.value = v.toString();
+		this(name, "");
 	}
 	
-	public static MsgAttribute cre(String name) {
-		MsgAttribute n = new MsgAttribute();
-		n.name = name;
-		return n;
-	}
 	
+	/**
+	 * Constructs a MsgAttribute with the given name and value
+	 * 
+	 * @param name name of the attribute
+	 * @param value value of the attribute determine by calling {@link #set(Object)}.
+	 * @throws IllegalArgumentException if {@code name} is null
+	 */
+	public MsgAttribute(String name, Object value) {
+		if (name == null)
+			throw new IllegalArgumentException("name cannot be null");
+		this.name = name;
+		set(value);
+	}
+
+	
+	/**
+	 * Returns the name of the attribute
+	 * 
+	 * @return the name
+	 */
 	public String getName() { return name; }
 	
+	
+	/**
+	 * Returns the value of the attribute as a string
+	 * 
+	 * @return the value as a string
+	 */
+	public String getValue() { return value; }
+	
+	
+	/**
+	 * Returns the value of the attribute as a string
+	 * 
+	 * @return the value as a string
+	 */
 	public String getString() { return value; }
+	
+	
+	/**
+	 * Returns the value of the attribute as a integer
+	 * 
+	 * @return the value as a integer
+	 */
 	public int getInt() { return Integer.parseInt(value); }
+	
+	
+	/**
+	 * Returns the value of the attribute as a double
+	 * 
+	 * @return the value as a double
+	 */
 	public double getDouble() { return Double.parseDouble(value); }
+	
+	
+	/**
+	 * Returns the value of the attribute as a float
+	 * 
+	 * @return the value as a float
+	 */
 	public float getFloat() { return Float.parseFloat(value); }
+	
+	
+	/**
+	 * Returns the value of the attribute as a long
+	 * 
+	 * @return the value as a long
+	 */
 	public long getLong() { return Long.parseLong(value); }
+	
+	
+	/**
+	 * Returns the value of the attribute as a boolean
+	 * 
+	 * @return the value as a boolean
+	 */
 	public boolean getBool() { return Boolean.parseBoolean(value); }
 	
-	public MsgAttribute set(int value) 		{ return set(String.valueOf(value)); }
-	public MsgAttribute set(double value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(float value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(long value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(boolean value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(char value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(char[] value) 	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(Object value)	{ return set(String.valueOf(value)); }
-	public MsgAttribute set(String value) 	{
-		this.value = value;
-		return this;
+	
+	/**
+	 * Sets the value of the attribute. The value of the attribute is a String and is
+	 * determine by calling {@link String#valueOf(Object)} with the supplied object.
+	 * 
+	 * @param value the new value of the attribute
+	 */
+	public void set(Object value) {
+		this.value = String.valueOf(value);
+	}
+	
+	/**
+	 * Returns the attributes name and value.
+	 */
+	@Override
+	public String toString() {
+		return name + ": " + value;
 	}
 }

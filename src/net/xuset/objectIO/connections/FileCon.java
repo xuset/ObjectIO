@@ -1,87 +1,77 @@
 package net.xuset.objectIO.connections;
 
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.File;
-import java.io.IOException;
-
-import net.xuset.objectIO.connections.Connection;
-import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 
+/**
+ * Connection that can be used to send and receive MarkupMsg to and from a file. Sending
+ * a message writes the contents of the message to file, and the file is read to receive
+ * a message. Buffered streams are used for I/O. Calling {@code flush()} is sometimes
+ * needed before data is actually written to the disk.
+ * 
+ * @author xuset
+ * @since 1.0
+ */
 
-public class FileCon extends Connection{
-	private static final char[] newLine = { 13 };
-
-	private final BufferedReader reader;
-	private final BufferedWriter writer;
+public class FileCon extends StreamCon {
 	
-	public FileCon(String path) throws IOException {
-		this(new File(path));
+	/**
+	 * Constructs a FileCon object.
+	 * This constructor calls the FileCon(File, id) constructor after it creates
+	 * the file object.
+	 * 
+	 * @param filePath the path to the file
+	 * @param id the id of the connection
+	 * @throws FileNotFoundException if the file is not found
+	 */
+	public FileCon(String filePath, long id) throws FileNotFoundException {
+		this(new File(filePath), id);
 	}
 	
-	public FileCon(File f) throws IOException {
-		if (f.isFile()) {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-		} else
-			reader = null;
-
-		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
+	
+	/**
+	 * Constructs a FileCon object. The I/O streams are created using the specified
+	 * file. The I/O streams are buffered streams.
+	 * 
+	 * @param file specifies the file for the connection to use
+	 * @param id the id of the connection
+	 * @throws FileNotFoundException if the file is not found
+	 */
+	public FileCon(File file, long id) throws FileNotFoundException {
+		super(
+				new BufferedInputStream(new FileInputStream(file)),
+				new BufferedOutputStream(new FileOutputStream(file)),
+				id);
 	}
 	
-	public boolean flush() {
+	
+	/**
+	 * Creates a new FileCon object for the given file and id.
+	 * This method differs in the FileCon constructors in that it does not throw
+	 * a FileNotFoundException. If the file is not found an IllegalArgumentException
+	 * is thrown instead.
+	 * 
+	 * @param file used for constructing the FileCon object
+	 * @param id the id of the connection
+	 * @return the newly created FileCon object
+	 * @throws IllegalArgumentException if file is null or does not exist.
+	 */
+	public static FileCon openFile(File file, long id) {
+		if (file == null)
+			throw new IllegalArgumentException("File cannot be null");
+		if (!file.isFile())
+			throw new IllegalArgumentException("The file must exist");
+		
 		try {
-			writer.flush();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
+			FileCon con = new FileCon(file, id);
+			return con;
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("The file must exist");
 		}
 	}
-	
-	public void close() {
-		try {
-			reader.close();
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public boolean sendMsg(MarkupMsg msg) {
-		try {
-			writer.write(msg.toString());
-			writer.write(newLine);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public boolean readNextLine() {
-		try {
-			String s = reader.readLine();
-			if (s != null) {
-				MarkupMsg msg = new MarkupMsg(s);
-				if (msg.parsedProperly())
-					msgQueue().add(msg);
-				return true;
-			}
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public void readAllLines() {
-		while (readNextLine()) { }
-	}
-
 }

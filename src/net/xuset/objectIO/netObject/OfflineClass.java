@@ -1,6 +1,6 @@
 package net.xuset.objectIO.netObject;
 
-import net.xuset.objectIO.connections.Connection;
+import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 public class OfflineClass extends NetClass {
@@ -19,10 +19,10 @@ public class OfflineClass extends NetClass {
 	//public void setValue(MarkupMsg msg) { }
 
 	@Override
-	public void distributeRecievedUpdates() { }
+	public void distributeAllUpdates() { }
 
 	@Override
-	protected void parseUpdate(MarkupMsg msg,  Connection c) { }
+	protected void parseUpdate(MarkupMsg msg,  ConnectionI c) { }
 
 	//@Override
 	//public boolean syncObject(NetObject obj) { return true; }
@@ -37,12 +37,12 @@ public class OfflineClass extends NetClass {
 	public void update() { }
 	
 	@Override
-	public void remove() { }
+	public void removeUpdater() { }
 
 	@Override
 	protected void sendUpdate(MarkupMsg data, long connectionId) { }
 
 	@Override
-	public void setController(ObjControllerI controller) { }
+	public void setUpdater(NetObjUpdater controller) { }
 
 }
