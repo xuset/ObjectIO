@@ -33,6 +33,7 @@ class ClientComm extends TcpHandshakeCon {
 		
 		Socket s = new Socket(ip, port);
 		try {
+			s.setKeepAlive(true);
 			return new ClientComm(s, hub);
 		} catch (IOException ex) {
 			s.close();

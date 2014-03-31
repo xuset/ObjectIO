@@ -32,7 +32,6 @@ public class GroupServerCon extends TcpHandshakeCon{
 		super(socket, server.getLocalId());
 		this.server = server;
 		socket.setKeepAlive(true);
-		socket.setTcpNoDelay(true);
 	}
 	
 	
