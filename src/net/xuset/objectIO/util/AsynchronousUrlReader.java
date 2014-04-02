@@ -1,5 +1,6 @@
 package net.xuset.objectIO.util;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,7 +55,7 @@ public class AsynchronousUrlReader {
 	 * 
 	 * @return {@code true} if an error was encountered
 	 */
-	public boolean encounteredError() { return exception == null; }
+	public boolean encounteredError() { return exception != null; }
 	
 	
 	/**
@@ -123,29 +124,26 @@ public class AsynchronousUrlReader {
 			
 			try {
 				URL urlObject = new URL(url);
-				stream = urlObject.openStream();
+				stream = new BufferedInputStream(urlObject.openStream());
 				
 				int index = 0;
 				char buffer[] = new char[bufferSize];
 				long startTime = System.currentTimeMillis();
-				while (index < buffer.length &&
-						startTime + timeout > System.currentTimeMillis()) {
+				while (index < buffer.length) {
 					
-					//TODO change this to a non-blocking read
-					if (true) {
-						int read = stream.read();
-						if (read == -1) {
-							reachedEndOfStream = true;
-							break;
-						} else {
-							buffer[index] = (char) read;
-							index++;
-						}
+					if (startTime + timeout <= System.currentTimeMillis())
+						throw new IOException("Timeout reached");
+					
+					int read = stream.read();
+					if (read == -1) {
+						reachedEndOfStream = true;
+						break;
+					} else {
+						buffer[index] = (char) read;
+						index++;
 					}
+					
 				}
-				
-				if (startTime + timeout <= System.currentTimeMillis())
-					exception = new IOException("Timeout reached");
 				
 				contents = new String(buffer);
 			} catch (IOException ex) {
