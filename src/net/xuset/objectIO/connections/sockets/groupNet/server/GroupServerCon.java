@@ -69,7 +69,7 @@ public class GroupServerCon extends TcpHandshakeCon{
 	 * Sends the messages and flushes the stream.
 	 */
 	@Override
-	public boolean sendMsg(MarkupMsg msg) {
+	public synchronized boolean sendMsg(MarkupMsg msg) {
 		boolean success = super.sendMsg(msg);
 		flush();
 		return success;

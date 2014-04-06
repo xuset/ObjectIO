@@ -222,7 +222,7 @@ public class StreamCon implements StreamConI{
 	 * @throws UnsupportedOperationException if sending messages is not supported
 	 */
 	@Override
-	public boolean sendMsg(MarkupMsg message) {
+	public synchronized boolean sendMsg(MarkupMsg message) {
 		if (!isSendingSupported())
 			throw new UnsupportedOperationException(unsupportedSend);
 		
