@@ -3,6 +3,8 @@ package net.xuset.objectIO.connections.sockets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.markupMsg.AsciiMsgParser;
 import net.xuset.objectIO.markupMsg.InvalidFormatException;
@@ -22,6 +24,8 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  * @since 1.0
  */
 public class StreamGreeter {
+	private static final Logger log = Logger.getLogger(StreamGreeter.class.getName());
+	
 	private static final int newLine = '\n';
 	private static final String attributeName = "new connection";
 	private static final int bufferSize = 1024;
@@ -57,6 +61,9 @@ public class StreamGreeter {
 		this.out = out;
 		this.in = in;
 		this.localId = localId;
+		
+		log.log(Level.INFO, "Attempting handshake with localId=" + localId);
+		
 		sendMeetAndGreet(timeout);
 	}
 	
@@ -65,8 +72,12 @@ public class StreamGreeter {
 		
 		sendGreetings();
 		readData(buffer, delay);
-		if (!determineEndId(buffer))
+		if (!determineEndId(buffer)) {
+			log.log(Level.SEVERE, "Handshake failed. localId=" + localId);
 			throw new HandshakeFailedException();
+		}
+		log.log(Level.INFO, "Handshake successful. localId=" + localId +
+				" endId=" + endId);
 	}
 	
 	private void sendGreetings() throws IOException {

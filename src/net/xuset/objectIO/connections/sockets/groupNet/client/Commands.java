@@ -1,5 +1,8 @@
 package net.xuset.objectIO.connections.sockets.groupNet.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.xuset.objectIO.connections.sockets.groupNet.GroupCmdCrafter;
 import net.xuset.objectIO.connections.sockets.groupNet.GroupNetMsg;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
@@ -13,6 +16,7 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  */
 
 class Commands {
+	private static Logger log = Logger.getLogger(Commands.class.getName());
 	
 	/**
 	 * Creates a predetermine list of commands and links them together
@@ -90,6 +94,7 @@ class Commands {
 		@Override
 		protected void doCommand(GroupNetMsg msg) {
 			long id = GroupCmdCrafter.getNewConId(msg);
+			log.log(Level.INFO, "Received newCon command. Adding connection(" + id + ")");
 			GroupClientCon c = new GroupClientCon(hub, id);
 			hub.addConnection(c);
 		}
@@ -117,9 +122,14 @@ class Commands {
 		@Override
 		protected void doCommand(GroupNetMsg msg) {
 			long id = GroupCmdCrafter.getDisconnectId(msg);
+			log.log(Level.INFO, "Received disconnectCmd for connection(" + id + ")");
 			GroupClientCon c = hub.getConnectionById(id);
 			if (c != null)
 				c.close();
+			else {
+				log.log(Level.WARNING, "Cannot remove connection(" + id +
+						"). connection does not exist");
+			}
 		}
 	}
 	
@@ -150,8 +160,8 @@ class Commands {
 				for (MarkupMsg m : msg.getNestedMsgs())
 					c.addMsgToQueue(m);
 			} else {
-				System.err.println("Connection (" + msg.from() +
-						") is not found. message, " + msg + " recieved.");
+				log.log(Level.WARNING, "Connection(" + msg.from() +
+						") is not found. message, " + msg.getContent() + " recieved.");
 			}
 		}
 	}

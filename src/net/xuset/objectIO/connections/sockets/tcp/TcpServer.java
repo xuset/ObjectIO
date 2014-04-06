@@ -3,6 +3,8 @@ package net.xuset.objectIO.connections.sockets.tcp;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.sockets.InetCon;
 import net.xuset.objectIO.connections.sockets.InetEventListener;
@@ -23,6 +25,8 @@ import net.xuset.objectIO.util.ConnectionIdGenerator;
  *
  */
 public class TcpServer implements InetHub<TcpCon>{
+	private static final Logger log = Logger.getLogger(TcpServer.class.getName());
+	
 	private final ArrayList<ServerEventListener<TcpCon>> eventListeners =
 			new ArrayList<ServerEventListener<TcpCon>>();
 	private final ArrayList<TcpCon> connections = new ArrayList<TcpCon>();
@@ -40,6 +44,7 @@ public class TcpServer implements InetHub<TcpCon>{
 	public TcpServer(long localId, TcpAcceptor<TcpCon> acceptor) {
 		this.localId = localId;
 		this.acceptor = acceptor;
+		log.log(Level.INFO, "new tcp server created with id=" + localId);
 	}
 	
 	
@@ -54,6 +59,7 @@ public class TcpServer implements InetHub<TcpCon>{
 	public TcpServer(long localId, int port) throws IOException {
 		this.localId = localId;
 		acceptor = new TcpConAcceptor(this, port);
+		log.log(Level.INFO, "new tcp server created with id=" + localId);
 	}
 	
 	
@@ -73,6 +79,7 @@ public class TcpServer implements InetHub<TcpCon>{
 
 	@Override
 	public void shutdown() {
+		log.log(Level.INFO, "Shutdown() called");
 		isShutdown = true;
 		acceptor.stop();
 		while (getConnectionCount() > 0) {
@@ -111,6 +118,7 @@ public class TcpServer implements InetHub<TcpCon>{
 
 	@Override
 	public boolean removeConnection(TcpCon connection) {
+		log.log(Level.INFO, "Removing connection(" + connection.getId() + ")");
 		synchronized(connections) {
 			return connections.remove(connection);
 		}
@@ -118,6 +126,7 @@ public class TcpServer implements InetHub<TcpCon>{
 
 	@Override
 	public boolean addConnection(TcpCon connection) {
+		log.log(Level.INFO, "Adding connection(" + connection.getId() + ")");
 		connection.watchEvents(new EventListener(connection));
 		synchronized(connections) {
 			return connections.add(connection);
@@ -127,8 +136,10 @@ public class TcpServer implements InetHub<TcpCon>{
 	@Override
 	public boolean sendMsg(MarkupMsg message, long connectionId) {
 		InetCon con = getConnectionById(connectionId);
-		if (con == null)
+		if (con == null) {
+			log.log(Level.WARNING, "Connection(" + connectionId + ") does not exist");
 			return false;
+		}
 		return con.sendMsg(message);
 	}
 

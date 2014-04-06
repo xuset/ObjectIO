@@ -1,6 +1,11 @@
 package net.xuset.objectIO.markupMsg;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AsciiMsgParser implements MsgParser {
+	private static final Logger log = Logger.getLogger(AsciiMsgParser.class.getName());
+	
 	private static final String magicNumber = "345";
 	private static final char unitSep = 31;
 	private static final char recordSep = 30;
@@ -179,8 +184,10 @@ public class AsciiMsgParser implements MsgParser {
 		try {
 			return createFromString(rawInput, parseNested);
 		} catch (IndexOutOfBoundsException ex) {
+			log.log(Level.WARNING, ex.getMessage(), ex);
 			throw new InvalidFormatException(ex);
 		} catch (NullPointerException ex) {
+			log.log(Level.WARNING, ex.getMessage(), ex);
 			throw new InvalidFormatException(ex);
 		}
 	}

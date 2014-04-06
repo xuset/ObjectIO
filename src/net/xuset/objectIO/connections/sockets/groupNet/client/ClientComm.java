@@ -3,6 +3,8 @@ package net.xuset.objectIO.connections.sockets.groupNet.client;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.sockets.groupNet.GroupNetMsg;
 import net.xuset.objectIO.connections.sockets.tcp.TcpHandshakeCon;
@@ -16,6 +18,8 @@ import net.xuset.objectIO.markupMsg.InvalidFormatException;
  * @since 1.0
  */
 class ClientComm extends TcpHandshakeCon {
+	private static final Logger log = Logger.getLogger(ClientComm.class.getName());
+	
 	private final GroupClientHub hub;
 	
 	/**
@@ -32,10 +36,12 @@ class ClientComm extends TcpHandshakeCon {
 			throws IOException, UnknownHostException {
 		
 		Socket s = new Socket(ip, port);
+		log.log(Level.INFO, "Socket connection to server established");
 		try {
 			s.setKeepAlive(true);
 			return new ClientComm(s, hub);
 		} catch (IOException ex) {
+			log.log(Level.SEVERE, "Connection instance could not be constructed", ex);
 			s.close();
 			throw new IOException(ex);
 		}
@@ -55,12 +61,13 @@ class ClientComm extends TcpHandshakeCon {
 	@Override
 	protected void handleRawInput(String input) {
 		if (input == null) {
+			log.log(Level.INFO, "Received null as input");
 			hub.handleNewMsg(null);
 			return;
 		}
 		
 		if (input.equals("")) {
-			System.err.println("Client recieved empty string!");
+			log.log(Level.WARNING, "Client received an empty string");
 			return;
 		}
 		
@@ -69,7 +76,7 @@ class ClientComm extends TcpHandshakeCon {
 			hub.handleNewMsg(msg);
 			return;
 		} catch(InvalidFormatException ex) {
-			ex.printStackTrace();
+			log.log(Level.WARNING, "Recieved bad string as input", ex);
 		}
 		
 	}

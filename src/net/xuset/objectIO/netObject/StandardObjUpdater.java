@@ -9,9 +9,10 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 
 public class StandardObjUpdater implements NetObjUpdater{
-	private ConcurrentHashMap<String, NetObject> objects = new ConcurrentHashMap<String, NetObject>();
+	private final ConcurrentHashMap<String, NetObject> objects =
+			new ConcurrentHashMap<String, NetObject>();
+	private final HubI<?> hub;
 	private boolean run = true;
-	private HubI<?> hub;
 	
 	public int threadSleep = 10;
 	

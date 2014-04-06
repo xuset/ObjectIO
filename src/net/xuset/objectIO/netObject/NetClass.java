@@ -3,6 +3,8 @@ package net.xuset.objectIO.netObject;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
@@ -10,6 +12,8 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 
 public class NetClass extends NetObject implements NetObjUpdater{
+	private static final Logger log = Logger.getLogger(NetClass.class.getName());
+	
 	private LinkedHashMap<String, NetObject> objects;
 	private MarkupMsg buffer = new MarkupMsg();
 	private long currentConnection = -1;
@@ -25,10 +29,12 @@ public class NetClass extends NetObject implements NetObjUpdater{
 	protected void parseUpdate(MarkupMsg msg,  ConnectionI c) {
 		for (MarkupMsg child : msg.getNestedMsgs()) {
 			NetObject obj = objects.get(child.getName());
-			if (obj == null)
-				System.out.println("Missing: " + msg.getName() + " content:" + msg.toString());
-			else
+			if (obj == null) {
+				log.log(Level.WARNING, "Missing: " + msg.getName() +
+						" content:" + msg.toString());
+			} else {
 				obj.parseUpdate(child, c);
+			}
 		}
 	}
 

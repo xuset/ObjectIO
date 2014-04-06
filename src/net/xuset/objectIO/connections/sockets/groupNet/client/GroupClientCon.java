@@ -2,6 +2,8 @@ package net.xuset.objectIO.connections.sockets.groupNet.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.Connection;
 import net.xuset.objectIO.connections.sockets.InetCon;
@@ -24,6 +26,8 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  *
  */
 public class GroupClientCon extends Connection implements InetCon{
+	private static final Logger log = Logger.getLogger(GroupClientCon.class.getName());
+	
 	private final List<InetEventListener> eventListeners = new ArrayList<InetEventListener>();
 	private final List<MarkupMsg> outputBuffer = new ArrayList<MarkupMsg>();
 	private final GroupClientHub hub;
@@ -125,6 +129,7 @@ public class GroupClientCon extends Connection implements InetCon{
 
 	@Override
 	public void close() {
+		log.log(Level.INFO, "close() called");
 		isClosed = true;
 		for (InetEventListener e : eventListeners)
 			e.onClose();

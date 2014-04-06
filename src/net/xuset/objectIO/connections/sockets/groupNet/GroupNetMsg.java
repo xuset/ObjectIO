@@ -35,14 +35,6 @@ public class GroupNetMsg extends MarkupMsg {
 		this(Types.Standard);
 	}
 	
-	/*public GroupNetMsg(String input) {
-		super(input);
-	}
-	
-	public GroupNetMsg(String input, int nestedLevels) {
-		super(input, nestedLevels);
-	}*/
-	
 	public boolean isBroadcast() {
 		if (to() == Connection.BROADCAST_CONNECTION)
 			return true;
@@ -63,11 +55,29 @@ public class GroupNetMsg extends MarkupMsg {
 		return types[index];
 	}
 	
-	public long from() 			{ MsgAttribute a = getAttribute(Options.From); if (a != null) return Long.parseLong(a.getValue()); return -1; }
-	public void from(long id) 	{ setAttribute(Options.From, String.valueOf(id)); }
+	public long from() {
+		MsgAttribute a = getAttribute(Options.From);
+		if (a != null)
+			return Long.parseLong(a.getValue());
+		
+		return -1;
+	}
 	
-	public long to() 		{ MsgAttribute a = getAttribute(Options.To); if (a != null) return Long.parseLong(a.getValue()); return -1; }
-	public void to(long id) { setAttribute(Options.To, String.valueOf(id)); }
+	public void from(long id) {
+		setAttribute(Options.From, String.valueOf(id));
+	}
+	
+	public long to() {
+		MsgAttribute a = getAttribute(Options.To);
+		if (a != null)
+			return Long.parseLong(a.getValue());
+		
+		return -1;
+	
+	}
+	public void to(long id) {
+		setAttribute(Options.To, String.valueOf(id));
+	}
 	
 	public MsgAttribute getAttribute(Options o) {
 		return getAttribute(String.valueOf(o.ordinal()));

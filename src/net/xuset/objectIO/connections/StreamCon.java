@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.markupMsg.AsciiMsgParser;
 import net.xuset.objectIO.markupMsg.InvalidFormatException;
@@ -27,6 +29,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  * @see java.io.OutputStream
  */
 public class StreamCon implements StreamConI{
+	private static final Logger log = Logger.getLogger(StreamCon.class.getName());
 
 	private static final String unsupportedSend =
 			"Sending messages is not supported";
@@ -229,7 +232,7 @@ public class StreamCon implements StreamConI{
 			out.write(messageDelimeter);
 			return true;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.log(Level.SEVERE, ex.getMessage(), ex);
 			close();
 		}
 		return false;
@@ -246,21 +249,23 @@ public class StreamCon implements StreamConI{
 		try {
 			out.flush();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.log(Level.SEVERE, "connection(" + getId() + ") : " + ex.getMessage(), ex);
 			close();
 		}
 	}
 
 	@Override
 	public void close() {
+		log.log(Level.INFO, "close() called on connection(" + getId() + ")");
+		
 		reachedEndOfInput = true;
 		isClosed = true;
 		
 		try { in.close(); }
-		catch (IOException ex) { ex.printStackTrace(); }
+		catch (IOException ex) { log.log(Level.WARNING, ex.getMessage(), ex); }
 		
 		try { out.close(); }
-		catch (IOException ex) { ex.printStackTrace(); }
+		catch (IOException ex) { log.log(Level.WARNING, ex.getMessage(), ex); }
 	}
 	
 	
@@ -291,7 +296,8 @@ public class StreamCon implements StreamConI{
 				MarkupMsg m = msgParser.parseFrom(input);
 				addMsgToQueue(m);
 			} catch (InvalidFormatException e) {
-				e.printStackTrace();
+				log.log(Level.WARNING, "connection(" + getId() + ") : " +
+						e.getMessage() + "\n input=" + input, e);
 			}
 		}
 	}
@@ -310,6 +316,8 @@ public class StreamCon implements StreamConI{
 				reachedEndOfInput = read == -1;
 				
 				if (reachedEndOfInput) {
+					log.log(Level.INFO, "connection(" + getId() +
+							") reached the end of the input stream");
 					handleRawInput(null);
 					return false;
 				}
@@ -324,7 +332,8 @@ public class StreamCon implements StreamConI{
 			}
 		} catch (IOException ex) {
 			if (!isClosed()) {
-				ex.printStackTrace();
+				log.log(Level.SEVERE, "connection(" + getId() + ") : " +
+						ex.getMessage(), ex);
 				reachedEndOfInput = true;
 				handleRawInput(null);
 			}

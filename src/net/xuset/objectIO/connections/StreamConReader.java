@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
@@ -25,6 +27,8 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  *
  */
 public class StreamConReader extends StreamCon {
+	private static final Logger log = Logger.getLogger(StreamConReader.class.getName());
+	
 	private final Queue<MarkupMsg> msgQueue = new ConcurrentLinkedQueue<MarkupMsg>();
 	
 
@@ -93,10 +97,15 @@ public class StreamConReader extends StreamCon {
 		
 		@Override
 		public void run() {
+			log.log(Level.INFO, "connection(" + StreamConReader.this.getId() +
+					") listening on input stream");
 			while (!reachedEndOfInput()) {
 				if (!attemptToReadRawMessage())
 					Thread.yield();
 			}
+			log.log(Level.INFO, "connection(" + StreamConReader.this.getId() +
+					") stopped listening on input stream");
+			
 		}
 	}
 

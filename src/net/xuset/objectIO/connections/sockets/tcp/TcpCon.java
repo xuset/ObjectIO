@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.StreamConReader;
 import net.xuset.objectIO.connections.sockets.InetCon;
@@ -22,6 +24,8 @@ import net.xuset.objectIO.connections.sockets.InetEventListener;
  *
  */
 public class TcpCon extends StreamConReader implements InetCon{
+	private static final Logger log = Logger.getLogger(TcpCon.class.getName());
+	
 	private final List<InetEventListener> eventListeners =
 			new ArrayList<InetEventListener>();
 	private final long localId;
@@ -93,16 +97,20 @@ public class TcpCon extends StreamConReader implements InetCon{
 	
 	@Override
 	protected void handleRawInput(String input) {
-		if (input == null)
+		if (input == null) {
+			log.log(Level.INFO, "connection(" + getId() + ") received null as input");
 			close();
-		else
+		} else
 			super.handleRawInput(input);
 	}
 
 	@Override
 	public boolean isClosed() {
-		if (socket.isClosed() && !super.isClosed())
+		if (socket.isClosed() && !super.isClosed()) {
+			log.log(Level.INFO, "connection(" + getId() + ")'s socket is closed but the" +
+					"the connection object is not. calling close()");
 			close();
+		}
 		return super.isClosed();
 	}
 	
@@ -130,7 +138,9 @@ public class TcpCon extends StreamConReader implements InetCon{
 		
 		if (!socket.isClosed()) {
 			try { socket.close(); }
-			catch (IOException e) { e.printStackTrace(); }
+			catch (IOException e) {
+				log.log(Level.WARNING, "(" + getId() + ") " + e.getMessage(), e);
+			}
 		}
 		
 		

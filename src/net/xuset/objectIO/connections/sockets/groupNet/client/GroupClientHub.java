@@ -3,6 +3,8 @@ package net.xuset.objectIO.connections.sockets.groupNet.client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.Connection;
 import net.xuset.objectIO.connections.ConnectionI;
@@ -48,6 +50,8 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  *
  */
 public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
+	private static final Logger log = Logger.getLogger(GroupClientHub.class.getName());
+	
 	private final List<ServerEventListener<GroupClientCon>> eventListeners;
 	private final List<GroupClientCon> connections = new ArrayList<GroupClientCon>();
 	private final long localId;
@@ -81,6 +85,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 		comm = ClientComm.connectToGroupNetServer(ip, port, this);
 		comm.watchEvents(new ClientCommEventListener());
 		addConnection(new BroadcastConnection(this));
+		log.log(Level.INFO, "new instance created with id=" + localId);
 	}
 	
 	/**
@@ -134,6 +139,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 
 	@Override
 	public boolean addConnection(GroupClientCon con) {
+		log.log(Level.INFO, "Adding connection(" + con.getId() + ")");
 		for (ServerEventListener<GroupClientCon> e : eventListeners)
 			e.onAdd(con);
 		con.watchEvents(new ConnectionEvent(con));
@@ -144,6 +150,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 
 	@Override
 	public boolean removeConnection(GroupClientCon connection) {
+		log.log(Level.INFO, "removing connection(" + connection.getId() + ")");
 		for (ServerEventListener<GroupClientCon> e : eventListeners)
 			e.onRemove(connection);
 		synchronized(connections) {
@@ -158,6 +165,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 
 	@Override
 	public void shutdown() {
+		log.log(Level.INFO, "Shutdown called");
 		if (isShutdown)
 			return;
 		
@@ -244,7 +252,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 
 		@Override
 		public void onClose() {
-			
+			//TODO this is uneeded
 		}
 		
 	}

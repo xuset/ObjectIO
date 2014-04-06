@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.sockets.InetCon;
 import net.xuset.objectIO.connections.sockets.InetHub;
@@ -19,6 +21,8 @@ import net.xuset.objectIO.connections.sockets.InetHub;
  * @param <T> they type of InetCon that will be added
  */
 public abstract class TcpAcceptor<T extends InetCon> {
+	private static final Logger log = Logger.getLogger(TcpAcceptor.class.getName());
+	
 	private final ServerSocket serverSocket;
 	private final Thread thread;
 	private final InetHub<T> hub;
@@ -55,6 +59,7 @@ public abstract class TcpAcceptor<T extends InetCon> {
 		serverSocket = new ServerSocket(port);
 		thread = new Thread(new Worker(), "Tcp server acceptor");
 		thread.start();
+		log.log(Level.INFO, "listening on port: " + port);
 	}
 	
 	
@@ -76,17 +81,19 @@ public abstract class TcpAcceptor<T extends InetCon> {
 	 * Stops listening for new connections and closes the ServerSocket object.
 	 */
 	public void stop() {
+		log.log(Level.INFO, "stop() called");
+		
 		isStopped = true;
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, e.getMessage(), e);
 		}
 		
 		try {
 			thread.join(500);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, e.getMessage(), e);
 		}
 		
 		//TODO this may be overkill.. 
@@ -110,21 +117,28 @@ public abstract class TcpAcceptor<T extends InetCon> {
 			try {
 				while (true) {
 					Socket s = serverSocket.accept();
+					log.log(Level.INFO, "New socket connected.");
 					handleNewSocket(s);
 				}
 				
 			} catch (IOException ex) {
-				if (!isStopped)
-					ex.printStackTrace();
+				if (!isStopped) {
+					log.log(Level.SEVERE, ex.getMessage(), ex);
+					stop();
+				}
 			}
 		}
 		
 		private void handleNewSocket(Socket s) {
 			try {
-				T con = createConnection(s);
-				hub.addConnection(con);
+				if (isAcceptable(s.getInetAddress())) {
+					T con = createConnection(s);
+					hub.addConnection(con);
+				} else {
+					closeSocket(s);
+				}
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				log.log(Level.SEVERE, ex.getMessage(), ex);
 				closeSocket(s);
 			}
 		}
@@ -135,7 +149,7 @@ public abstract class TcpAcceptor<T extends InetCon> {
 					s.close();
 			}
 			catch (IOException ex) {
-				ex.printStackTrace();
+				log.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
 		

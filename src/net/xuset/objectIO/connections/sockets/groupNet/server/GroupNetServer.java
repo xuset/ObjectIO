@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.sockets.InetEventListener;
 import net.xuset.objectIO.connections.sockets.InetHub;
@@ -27,6 +29,8 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  *
  */
 public class GroupNetServer implements InetHub<GroupServerCon>{
+	private static final Logger log = Logger.getLogger(GroupNetServer.class.getName());
+	
 	private final long localId;
 	private final List<ServerEventListener<GroupServerCon>> eventListeners;
 	private final Queue<GroupServerCon> connections;
@@ -53,6 +57,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 		connections = new ConcurrentLinkedQueue<GroupServerCon>();
 		eventListeners = new ArrayList<ServerEventListener<GroupServerCon>>();
 		acceptor = new GroupNetAcceptor(this, port);
+		log.log(Level.INFO, "new instance created with id=" + localId);
 	}
 	
 	/**
@@ -65,8 +70,12 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 			broadcastMsg(msg);
 		else {
 			GroupServerCon c = getConnectionById(msg.to());
-			if (c != null)
+			if (c != null) {
 				c.sendMsg(msg);
+			} else {
+				log.log(Level.WARNING, "Can't forward message." +
+						"Connection(" + msg.to() + ") does not exist");
+			}
 		}
 	}
 	
@@ -94,6 +103,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	
 	@Override
 	public void shutdown() {
+		log.log(Level.INFO, "Shutdown() called");
 		isShutdown = true;
 		acceptor.stop();
 		disconnectAll();
@@ -128,7 +138,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 
 	@Override
 	public boolean addConnection(GroupServerCon connection) {
-		
+		log.log(Level.INFO, "Connection(" + connection.getId() + ") added");
 		broadcastAddConnection(connection);
 		boolean success = connections.add(connection);
 		connection.watchEvents(new ConnectionEvent(connection));
@@ -138,6 +148,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 
 	@Override
 	public boolean removeConnection(GroupServerCon con) {
+		log.log(Level.INFO, "Connection(" + con.getId() + ") removed");
 		boolean success = connections.remove(con);
 		broadcastMsg(GroupCmdCrafter.craftDisconnect(con.getId()));
 		notifyRemove(con);
@@ -153,6 +164,9 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 		if (c != null) {
 			GroupNetMsg parent = craftGroupNetMsg(message, connectionId, getLocalId());
 			return c.sendMsg(parent);
+		} else {
+			log.log(Level.WARNING, "Can't send message to connection. " +
+					"Connection(" + connectionId + ") does not exist.");
 		}
 		return false;
 	}
