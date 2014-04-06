@@ -125,7 +125,7 @@ public class TcpCon extends StreamConReader implements InetCon{
 	}
 	
 	@Override
-	public void close() {
+	public synchronized void close() {
 		super.close();
 		
 		if (!socket.isClosed()) {
