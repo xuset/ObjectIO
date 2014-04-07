@@ -32,7 +32,7 @@ public abstract class Connection implements ConnectionI{
 	 */
 	public static final long BROADCAST_CONNECTION = 0l;
 
-	private final Queue<MarkupMsg> messageQueue = new LinkedList<MarkupMsg>();
+	private final Queue<MarkupMsg> messageQueue;
 	private final long id;
 	
 	@Override
@@ -56,12 +56,26 @@ public abstract class Connection implements ConnectionI{
 	}
 	
 	/**
-	 * Sole constructor for <code>Connection</code>.
+	 * Constructs a new instance with the given id.
 	 * 
 	 * @param id value returned by <code>getId()</code>
 	 * @see #getId()
 	 */
 	public Connection(long id) {
+		this(id, new LinkedList<MarkupMsg>());
+	}
+	
+	
+	/**
+	 * Constructs a new instance with the given id. The given Queue object is used
+	 * to store received messages. Messages are added to this queue by calling
+	 * {@code addMsgToQueue(MarkupMsg)} and read by calling {@code pollNextMsg()}.
+	 * 
+	 * @param id the id of the connection
+	 * @param receivedQueue the received messages queue
+	 */
+	public Connection(long id, Queue<MarkupMsg> receivedQueue) {
+		messageQueue = receivedQueue;
 		this.id = id;
 	}
 }

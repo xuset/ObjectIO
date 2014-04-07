@@ -2,6 +2,7 @@ package net.xuset.objectIO.connections.sockets.groupNet.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +58,7 @@ public class GroupClientCon extends Connection implements InetCon{
 	 * @param isBroadcast will be returned by {@link #isBroadcast()}
 	 */
 	GroupClientCon(GroupClientHub hub, long endId, boolean isBroadcast) {
-		super(endId);
+		super(endId, new ConcurrentLinkedQueue<MarkupMsg>());
 		this.hub = hub;
 		this.isBroadcast = isBroadcast;
 		resetOutputBuffer();
