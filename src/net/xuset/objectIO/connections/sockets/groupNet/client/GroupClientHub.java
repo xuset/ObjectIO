@@ -140,22 +140,25 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	@Override
 	public boolean addConnection(GroupClientCon con) {
 		log.log(Level.INFO, "Adding connection(" + con.getId() + ")");
-		for (ServerEventListener<GroupClientCon> e : eventListeners)
-			e.onAdd(con);
 		con.watchEvents(new ConnectionEvent(con));
 		synchronized(connections) {
-			return connections.add(con);
+			connections.add(con);
 		}
+		for (ServerEventListener<GroupClientCon> e : eventListeners)
+			e.onAdd(con);
+		return true;
 	}
 
 	@Override
 	public boolean removeConnection(GroupClientCon connection) {
 		log.log(Level.INFO, "removing connection(" + connection.getId() + ")");
+		boolean found;
+		synchronized(connections) {
+			found = connections.remove(connection);
+		}
 		for (ServerEventListener<GroupClientCon> e : eventListeners)
 			e.onRemove(connection);
-		synchronized(connections) {
-			return connections.remove(connection);
-		}
+		return found;
 	}
 
 	@Override

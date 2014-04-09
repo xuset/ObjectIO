@@ -119,9 +119,17 @@ public class TcpServer implements InetHub<TcpCon>{
 	@Override
 	public boolean removeConnection(TcpCon connection) {
 		log.log(Level.INFO, "Removing connection(" + connection.getId() + ")");
+		boolean found;
 		synchronized(connections) {
-			return connections.remove(connection);
+			found = connections.remove(connection);
 		}
+		for (ServerEventListener<TcpCon> l : eventListeners)
+			l.onRemove(connection);
+		if (connections.isEmpty()) {
+			for (ServerEventListener<TcpCon> l : eventListeners)
+				l.onLastRemove();
+		}
+		return found;
 	}
 
 	@Override
@@ -129,8 +137,11 @@ public class TcpServer implements InetHub<TcpCon>{
 		log.log(Level.INFO, "Adding connection(" + connection.getId() + ")");
 		connection.watchEvents(new EventListener(connection));
 		synchronized(connections) {
-			return connections.add(connection);
+			connections.add(connection);
 		}
+		for (ServerEventListener<TcpCon> l : eventListeners)
+			l.onAdd(connection);
+		return true;
 	}
 
 	@Override
