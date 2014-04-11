@@ -222,20 +222,37 @@ public class StreamCon implements StreamConI{
 	 * @throws UnsupportedOperationException if sending messages is not supported
 	 */
 	@Override
-	public synchronized boolean sendMsg(MarkupMsg message) {
+	public boolean sendMsg(MarkupMsg message) {
 		if (!isSendingSupported())
 			throw new UnsupportedOperationException(unsupportedSend);
 		
 		try {
 			byte[] bytes = msgParser.toRawByteArray(message);
-			out.write(bytes, 0, bytes.length);
-			out.write(messageDelimeter);
+			sendRawMsg(bytes);
 			return true;
 		} catch (IOException ex) {
 			log.log(Level.SEVERE, ex.getMessage(), ex);
 			close();
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * Writes the given byte array directly to the output stream. This bypasses any
+	 * calls to the message parser. After the byte array is written,
+	 * the message delimiter byte is written to the stream.
+	 * 
+	 * @param bytes the byte array to write to the stream
+	 * @throws IOException if an error occurs while writing to the stream
+	 * @throws UnsupportedOperationException if sending messages is not supported
+	 * @see {@link #getMessageDelimeter()}
+	 */
+	protected synchronized void sendRawMsg(byte[] bytes) throws IOException {
+		if (!isSendingSupported())
+			throw new UnsupportedOperationException(unsupportedSend);
+		out.write(bytes, 0, bytes.length);
+		out.write(messageDelimeter);
 	}
 
 	

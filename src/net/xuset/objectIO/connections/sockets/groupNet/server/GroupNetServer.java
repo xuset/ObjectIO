@@ -65,13 +65,13 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	 * 
 	 * @param msg message to forward
 	 */
-	void forwardMsg(GroupNetMsg msg) {
+	void forwardMsg(GroupNetMsg msg, byte[] rawMsg) {
 		if (msg.isBroadcast())
-			broadcastMsg(msg);
+			broadcastMsg(msg, rawMsg);
 		else {
 			GroupServerCon c = getConnectionById(msg.to());
 			if (c != null) {
-				c.sendMsg(msg);
+				c.sendRawAndFlush(rawMsg);
 			} else {
 				log.log(Level.WARNING, "Can't forward message." +
 						"Connection(" + msg.to() + ") does not exist");
@@ -79,12 +79,24 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 		}
 	}
 	
-	private void broadcastMsg(GroupNetMsg msg) {
+	private void broadcastMsg(GroupNetMsg msg, byte[] rawMsg) {
 		for (GroupServerCon c : connections) {
 			if (msg.from() != c.getId()) {
-				c.sendMsg(msg);
+				c.sendRawAndFlush(rawMsg);
 			}
 		}
+	}
+	
+	private boolean broadcastMsg(GroupNetMsg broadcast) {
+		boolean allTrue = true;
+		for (int i = 0; i < getConnectionCount(); i++) {
+			GroupServerCon c = getConnectionByIndex(i);
+			broadcast.to(c.getId());
+			if (!c.sendMsgAndFlush(broadcast))
+				allTrue = false;
+			
+		}
+		return allTrue;
 	}
 	
 	
@@ -163,7 +175,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 		GroupServerCon c = getConnectionById(connectionId);
 		if (c != null) {
 			GroupNetMsg parent = craftGroupNetMsg(message, connectionId, getLocalId());
-			return c.sendMsg(parent);
+			return c.sendMsgAndFlush(parent);
 		} else {
 			log.log(Level.WARNING, "Can't send message to connection. " +
 					"Connection(" + connectionId + ") does not exist.");
@@ -174,16 +186,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	@Override
 	public boolean broadcastMsg(MarkupMsg message) {
 		GroupNetMsg broadcast = craftGroupNetMsg(message, 0L, getLocalId());
-		
-		boolean allTrue = true;
-		for (int i = 0; i < getConnectionCount(); i++) {
-			GroupServerCon c = getConnectionByIndex(i);
-			broadcast.to(c.getId());
-			if (!c.sendMsg(broadcast))
-				allTrue = false;
-			
-		}
-		return allTrue;
+		return broadcastMsg(broadcast);
 	}
 
 	@Override
@@ -239,7 +242,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 		broadcastMsg(GroupCmdCrafter.craftNewCon(newCon.getId()));
 		for (int i = 0; i < getConnectionCount(); i++) {
 			GroupServerCon c = getConnectionByIndex(i);
-			newCon.sendMsg(GroupCmdCrafter.craftNewCon(c.getId()));
+			newCon.sendMsgAndFlush(GroupCmdCrafter.craftNewCon(c.getId()));
 		}
 	}
 	

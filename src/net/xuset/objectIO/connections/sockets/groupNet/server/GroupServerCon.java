@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.sockets.groupNet.GroupNetMsg;
 import net.xuset.objectIO.connections.sockets.tcp.TcpHandshakeCon;
+import net.xuset.objectIO.markupMsg.AsciiMsgParser;
 import net.xuset.objectIO.markupMsg.InvalidFormatException;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
@@ -36,6 +37,7 @@ public class GroupServerCon extends TcpHandshakeCon{
 		super(socket, server.getLocalId());
 		this.server = server;
 		socket.setKeepAlive(true);
+		setParser(new AsciiMsgParser(false));
 	}
 	
 	
@@ -51,7 +53,7 @@ public class GroupServerCon extends TcpHandshakeCon{
 		if (input != null) {
 			try {
 				GroupNetMsg msg = new GroupNetMsg(getParser().parseFrom(input));
-				server.forwardMsg(msg);
+				server.forwardMsg(msg, input.getBytes());
 			} catch (InvalidFormatException ex) {
 				log.log(Level.WARNING, "connection(" + getId() +
 						") received bad string as input", ex);
@@ -66,11 +68,35 @@ public class GroupServerCon extends TcpHandshakeCon{
 	
 	
 	/**
-	 * Sends the messages and flushes the stream.
+	 * Writes the byte array to the stream and then flushes the stream.
+	 * @{code sendRawMsg(byte[])} is called then {@code flush()} is called.
+	 * 
+	 * @param bytes the byte array to write to the output stream
+	 * @see #sendRawMsg(byte[])
+	 * @see #flush()
 	 */
-	@Override
-	public synchronized boolean sendMsg(MarkupMsg msg) {
-		boolean success = super.sendMsg(msg);
+	void sendRawAndFlush(byte[] bytes) {
+		try {
+			sendRawMsg(bytes);
+			flush();
+		} catch (IOException e) {
+			log.log(Level.WARNING, "connection(" + getId() + ")" + e.getMessage(), e);
+			close();
+		}
+	}
+	
+	
+	/**
+	 * Sends the message then flushes the stream.
+	 * {@code sendMsg(MarkupMsg)} is called then {@code flush()} is called.
+	 * 
+	 * @param msg the message to send
+	 * @return returns the value from {@code sendMsg(MarkupMsg)}
+	 * @see #sendRawMsg(byte[])
+	 * @see #flush()
+	 */
+	boolean sendMsgAndFlush(MarkupMsg msg) {
+		boolean success = sendMsg(msg);
 		flush();
 		return success;
 	}
