@@ -8,12 +8,12 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  * A basic implementation of <code>HubI</code>.
  * 
  * @author xuset
- * @param <T> the type of <code>ConnectionI</code> that will be stored
- * @see ConnectionI
+ * @param <T> the type of <code>Connection</code> that will be stored
+ * @see Connection
  * @since 1.0
  */
 
-public class ConnectionHub<T extends ConnectionI> implements HubI<T> {
+public class ConnectionHub<T extends Connection> implements Hub<T> {
 	
 	private final ArrayList<T> connections = new ArrayList<T>();
 	
@@ -48,7 +48,7 @@ public class ConnectionHub<T extends ConnectionI> implements HubI<T> {
 	public boolean sendMsg(MarkupMsg message, long connectionId) {
 		if (connectionId == Connection.BROADCAST_CONNECTION)
 			return broadcastMsg(message);
-		ConnectionI c = getConnectionById(connectionId);
+		Connection c = getConnectionById(connectionId);
 		if (c != null)
 			return c.sendMsg(message);
 		return false;
@@ -62,7 +62,7 @@ public class ConnectionHub<T extends ConnectionI> implements HubI<T> {
 	@Override
 	public boolean broadcastMsg(MarkupMsg message) {
 		boolean allSuccessful = true;
-		for (ConnectionI c : connections) {
+		for (Connection c : connections) {
 			boolean success = c.sendMsg(message);
 			if (success == false && allSuccessful == true)
 				allSuccessful = false;

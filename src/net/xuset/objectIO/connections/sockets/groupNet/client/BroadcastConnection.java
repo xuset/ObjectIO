@@ -6,7 +6,7 @@ import net.xuset.objectIO.connections.sockets.groupNet.GroupNetMsg;
 
 /**
  * The broadcast connection used by GroupClientHub. This connection has an id
- * equal to {@link Connection#BROADCAST_CONNECTION} and sets the broadcast flag to true
+ * equal {@link Connection#BROADCAST_CONNECTION} and sets the broadcast flag to true
  * on all messages sent through this connection.
  * 
  * @author xuset

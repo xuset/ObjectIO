@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.xuset.objectIO.connections.Connection;
+import net.xuset.objectIO.connections.AbstractConnection;
 import net.xuset.objectIO.connections.sockets.InetCon;
 import net.xuset.objectIO.connections.sockets.InetEventListener;
 import net.xuset.objectIO.connections.sockets.groupNet.GroupNetMsg;
@@ -26,7 +26,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  * @since 1.0
  *
  */
-public class GroupClientCon extends Connection implements InetCon{
+public class GroupClientCon extends AbstractConnection implements InetCon{
 	private static final Logger log = Logger.getLogger(GroupClientCon.class.getName());
 	
 	private final List<InetEventListener> eventListeners = new ArrayList<InetEventListener>();

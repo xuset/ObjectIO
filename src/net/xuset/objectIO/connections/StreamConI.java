@@ -3,7 +3,7 @@ package net.xuset.objectIO.connections;
 import net.xuset.objectIO.markupMsg.MsgParsable;
 
 /**
- * An extension of {@code ConnectionI}, this interface outlines methods that could
+ * An extension of {@code Connection}, this interface outlines methods that could
  * by useful for connections that are backed by streams.
  * 
  * @author xuset
@@ -12,7 +12,7 @@ import net.xuset.objectIO.markupMsg.MsgParsable;
  * @see java.io.OutputStream
  */
 
-public interface StreamConI extends ConnectionI, MsgParsable{
+public interface StreamConI extends Connection, MsgParsable{
 	
 	/**
 	 * Returns whether the connection has been closed.

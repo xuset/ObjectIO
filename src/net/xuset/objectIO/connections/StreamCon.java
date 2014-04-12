@@ -16,7 +16,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
 
 /**
  * 
- * StreamCon is implementation of ConnectionI that is backed by streams. Messages are
+ * StreamCon is implementation of Connection that is backed by streams. Messages are
  * sent and received through InputStream and OutputStream objects.
  * 
  * <p>Messages are sent over the InputStream when {@code sendMsg(MarkupMsg)} is called.

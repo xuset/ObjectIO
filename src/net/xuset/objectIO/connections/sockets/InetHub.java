@@ -1,6 +1,6 @@
 package net.xuset.objectIO.connections.sockets;
 
-import net.xuset.objectIO.connections.HubI;
+import net.xuset.objectIO.connections.Hub;
 
 
 /**
@@ -14,7 +14,7 @@ import net.xuset.objectIO.connections.HubI;
  * @since 1.0
  * @param <T> the type of InetCon that will be stored
  */
-public interface InetHub<T extends InetCon> extends HubI<T>{
+public interface InetHub<T extends InetCon> extends Hub<T>{
 	
 	
 	/**

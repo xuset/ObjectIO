@@ -1,6 +1,6 @@
 package net.xuset.objectIO.connections;
 
-import net.xuset.objectIO.connections.sockets.p2pServer.GroupNetServerClientTest;
+import net.xuset.objectIO.connections.sockets.groupNet.GroupNetServerClientTest;
 import net.xuset.objectIO.connections.sockets.tcp.TcpServerClientTest;
 
 import org.junit.runner.RunWith;

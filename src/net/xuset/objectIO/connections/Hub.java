@@ -3,22 +3,22 @@ package net.xuset.objectIO.connections;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 /**
- * A container interface for <code>ConnectionI</code> objects.
- * <code>HubI</code> outlines simple operations that are performed on connections.
+ * A container interface for <code>Connection</code> objects.
+ * <code>Hub</code> outlines simple operations that are performed on connections.
  * 
  * <p>It is worth noting that a connection does not have to be stored in a hub.</p>
  * 
  * @author xuset
- * @param <T> type of {@link ConnectionI} to store
+ * @param <T> type of {@link Connection} to store
  * @since 1.0
  */
 
-public interface HubI <T extends ConnectionI> {
+public interface Hub <T extends Connection> {
 	
 	
 	/**
 	 * Searches stored connections for an id matching the supplied argument id.
-	 * The id of stored connections is determined by {@link ConnectionI#getId()}.
+	 * The id of stored connections is determined by {@link Connection#getId()}.
 	 * 
 	 * <p>It is good practice when adding connections to the hub to not add multiple
 	 * connections with same id. This can cause unexpected results.</p>
@@ -26,7 +26,7 @@ public interface HubI <T extends ConnectionI> {
 	 * @param connectionId the id of the connection to return
 	 * @return returns a connection with an id equal to <code>connectionId</code>. If no
 	 * 			connection is found, <code>null</code> is returned.
-	 * @see ConnectionI
+	 * @see Connection
 	 * @since 1.0
 	 */
 	public T getConnectionById(long connectionId);
@@ -42,7 +42,7 @@ public interface HubI <T extends ConnectionI> {
 	 * @param index index of the element to return.
 	 * @return the connection at the specified index
 	 * @throws IndexOutOfBoundsException if index is out of bounds
-	 * @see ConnectionI
+	 * @see Connection
 	 * @since 1.0
 	 */
 	public T getConnectionByIndex(int index);
@@ -65,7 +65,7 @@ public interface HubI <T extends ConnectionI> {
 	 * 
 	 * @param connection the connection to store
 	 * @return true if the method was successful in adding the connection
-	 * @see ConnectionI
+	 * @see Connection
 	 * @since 1.0
 	 */
 	public boolean addConnection(T connection);
@@ -76,16 +76,16 @@ public interface HubI <T extends ConnectionI> {
 	 * 
 	 * @param connection the connection to remove
 	 * @return true if the connection was found and removed successfully
-	 * @see ConnectionI
+	 * @see Connection
 	 * @since 1.0
 	 */
 	public boolean removeConnection(T connection);
 	
 	
 	/**
-	 * Finds a connection whose {@link ConnectionI#getId() getId()} equals the supplied
+	 * Finds a connection whose {@link Connection#getId() getId()} equals the supplied
 	 * argument <code>connectionId</code> then sends the message via the found connection.
-	 * Usually the message is sent by calling {@link ConnectionI#sendMsg(MarkupMsg)} on
+	 * Usually the message is sent by calling {@link Connection#sendMsg(MarkupMsg)} on
 	 * the found connection.
 	 * 
 	 * @param message the message to send
@@ -93,14 +93,14 @@ public interface HubI <T extends ConnectionI> {
 	 * @return returns true if the message sent successfully or false if no connection was
 	 * 			found or the sending the message failed
 	 * @since 1.0
-	 * @see ConnectionI
+	 * @see Connection
 	 */
 	public boolean sendMsg(MarkupMsg message, long connectionId);
 	
 	
 	/**
 	 * The supplied <code>MarkupMsg</code> is sent to all stored connections.
-	 * Usually this done by calling {@linkplain ConnectionI#sendMsg(MarkupMsg)} on each
+	 * Usually this done by calling {@linkplain Connection#sendMsg(MarkupMsg)} on each
 	 * stored connection.
 	 * 
 	 * @param message the message sent to all stored connections

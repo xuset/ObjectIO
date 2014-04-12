@@ -17,7 +17,7 @@ import java.util.List;
  * a MarkupMsg object on the other side.</p>
  * 
  * @author xuset
- * @see net.xuset.objectIO.connections.ConnectionI
+ * @see net.xuset.objectIO.connections.Connection
  * @since 1.0
  *
  */

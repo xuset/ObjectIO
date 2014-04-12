@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.xuset.objectIO.connections.Connection;
-import net.xuset.objectIO.connections.ConnectionI;
 import net.xuset.objectIO.connections.sockets.InetEventListener;
 import net.xuset.objectIO.connections.sockets.InetHub;
 import net.xuset.objectIO.connections.sockets.ServerEventListener;
@@ -131,7 +130,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 
 	@Override
 	public boolean sendMsg(MarkupMsg msg, long endId) {
-		ConnectionI c = getConnectionById(endId);
+		Connection c = getConnectionById(endId);
 		if (c == null)
 			return false;
 		return c.sendMsg(msg);

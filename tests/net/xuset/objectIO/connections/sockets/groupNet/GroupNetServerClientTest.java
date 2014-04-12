@@ -1,4 +1,4 @@
-package net.xuset.objectIO.connections.sockets.p2pServer;
+package net.xuset.objectIO.connections.sockets.groupNet;
 
 import static org.junit.Assert.*;
 

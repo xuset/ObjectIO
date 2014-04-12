@@ -1,81 +1,94 @@
 package net.xuset.objectIO.connections;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 /**
- * Basic, abstract implementation of <code>ConnectionI</code>. This is just a helper
- * class that leaves sending and receiving of messages up to the implementing
- * class. <code>Connection</code> is backed by a <code>Queue</code> for storing received
- * messages. The implementing class can call the protected method
- * <code>addMsgToQueue</code> to add a received message to the queue. Calling
- * <code>pollNextMsg</code> polls from the queue.
+ * Interface that outlines operations for sending and receiving messages across various
+ * mediums. A <code>MarkupMsg</code> object is used for sending and reading
+ * received messages.
+ * 
+ * <p>Implementations are able to choose how the <code>MarkupMsg</code> is sent and
+ * received. The message could be sent across a TCP stream, file stream, or some other
+ * medium.</p>
+ * 
+ * <p>Most implementations will be setup so that sending a message from one
+ * <code>Connection</code> will be received by another <code>Connection</code>.
+ * Sending can be done by calling <code>sendMsg(MarkupMsg)</code> and getting a received message
+ * can be done by calling <code>pollNextMsg()</code></p>
  * 
  * @author xuset
- * @see ConnectionI
+ * @see MarkupMsg
+ * @see TcpCon
+ * @see FilCon
  * @since 1.0
  */
 
-public abstract class Connection implements ConnectionI{
+public interface Connection {
 	/**
 	 * This is primarily used as the <code>connectionId</code> when calling
-	 * {@link HubI#sendMsg(MarkupMsg, long)}. If the hub supports
+	 * {@link Hub#sendMsg(MarkupMsg, long)}. If the hub supports
 	 * broadcasting messages then usually the supplied
-	 * message is passed to {@link HubI#broadcastMsg(MarkupMsg)}
+	 * message is passed to {@link Hub#broadcastMsg(MarkupMsg)}
 	 * 
-	 * @see HubI
-	 * @see HubI#sendMsg(MarkupMsg, long)
-	 * @see HubI#broadcastMsg(MarkupMsg)
+	 * @see Hub
+	 * @see Hub#sendMsg(MarkupMsg, long)
+	 * @see Hub#broadcastMsg(MarkupMsg)
 	 * @since 1.0
 	 */
 	public static final long BROADCAST_CONNECTION = 0l;
-
-	private final Queue<MarkupMsg> messageQueue;
-	private final long id;
 	
-	@Override
-	public abstract boolean sendMsg(MarkupMsg msg);
-
-	@Override public long getId() { return id; }
-	@Override public MarkupMsg pollNextMsg() { return messageQueue.poll(); }
-	@Override public boolean isMsgAvailable() { return !messageQueue.isEmpty(); }
+	/**
+	 * Sends a MarkupMsg. Depending on the implementing
+	 * class, the message could be set across a TCP stream, file stream, or some other
+	 * medium.
+	 * 
+	 * <p>Implementations are free to determine how to send messages. The protocol for
+	 * sending messages is also defined by the implementation.</p>
+	 * 
+	 * @param msg message to send across the connection
+	 * @return true if the sending the message was successful, false otherwise.
+	 * 			It does not guarantee that the message was received.
+	 * @since 1.0
+	 */
+	boolean sendMsg(MarkupMsg msg);
 	
 	
 	/**
-	 * <code>Connection</code> has a queue for storing received messages.
-	 * Received messages can be added to this queue by calling this method.
-	 * Calling <code>pollNextMsg()</code> polls items added the queue.
+	 * Each connection has a unique id that allows others to distinguish between
+	 * connections
 	 * 
-	 * @param msg message to be added to the queue
-	 * @see #pollNextMsg
+	 * @return the unique id associated with this connection
+	 * @since 1.0
 	 */
-	protected void addMsgToQueue(MarkupMsg msg) {
-		messageQueue.add(msg);
-	}
-	
-	/**
-	 * Constructs a new instance with the given id.
-	 * 
-	 * @param id value returned by <code>getId()</code>
-	 * @see #getId()
-	 */
-	public Connection(long id) {
-		this(id, new LinkedList<MarkupMsg>());
-	}
+	long getId();
 	
 	
 	/**
-	 * Constructs a new instance with the given id. The given Queue object is used
-	 * to store received messages. Messages are added to this queue by calling
-	 * {@code addMsgToQueue(MarkupMsg)} and read by calling {@code pollNextMsg()}.
+	 * Removes and returns a received message.
+	 * Messages are returned in FIFO order. So messages received earlier will be returned
+	 * before messages received latter. Be aware that received messages are not guaranteed
+	 * to be in the order they were sent.
 	 * 
-	 * @param id the id of the connection
-	 * @param receivedQueue the received messages queue
+	 * <p>this method should only return null if <code>isMsgAvailable()</code> returns
+	 * false</p>
+	 * 
+	 * <p>In most situations, one <code>Connection</code> will send a message to another
+	 * <code>Connection</code>. The received message can be read by calling
+	 * <code>pollNextMsg()</code>.</p>
+	 * 
+	 * @return the next available <code>MarkupMsg</code> or <code>null</code> if there
+	 * 			are no messages to poll
+	 * @since 1.0
 	 */
-	public Connection(long id, Queue<MarkupMsg> receivedQueue) {
-		messageQueue = receivedQueue;
-		this.id = id;
-	}
+	MarkupMsg pollNextMsg();
+	
+	
+	/**
+	 * Returns whether message has been received and can be returned by calling
+	 * <code>pollNextMsg()</code>
+	 * 
+	 * @return true if <code>pollNextMsg()</code> will not return null
+	 * @since 1.0
+	 */
+	boolean isMsgAvailable();
 }
