@@ -4,36 +4,33 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 /**
  * Interface that outlines operations for sending and receiving messages across various
- * mediums. A <code>MarkupMsg</code> object is used for sending and reading
+ * mediums. A {@code MarkupMsg} object is used for sending and reading
  * received messages.
  * 
- * <p>Implementations are able to choose how the <code>MarkupMsg</code> is sent and
+ * <p>Implementations are able to choose how the {@code MarkupMsg} is sent and
  * received. The message could be sent across a TCP stream, file stream, or some other
  * medium.</p>
  * 
  * <p>Most implementations will be setup so that sending a message from one
- * <code>Connection</code> will be received by another <code>Connection</code>.
- * Sending can be done by calling <code>sendMsg(MarkupMsg)</code> and getting a received message
- * can be done by calling <code>pollNextMsg()</code></p>
+ * {@code Connection} will be received by another {@code Connection}.
+ * Sending can be done by calling {@code sendMsg(MarkupMsg)} and getting a received message
+ * can be done by calling {@code pollNextMsg()}</p>
  * 
  * @author xuset
  * @see MarkupMsg
- * @see TcpCon
- * @see FilCon
+ * @see net.xuset.objectIO.connections.sockets.tcp.TcpCon TcpCon
+ * @see FileCon
  * @since 1.0
  */
 
 public interface Connection {
 	/**
-	 * This is primarily used as the <code>connectionId</code> when calling
+	 * This is primarily used as the {@code connectionId} when calling
 	 * {@link Hub#sendMsg(MarkupMsg, long)}. If the hub supports
 	 * broadcasting messages then usually the supplied
 	 * message is passed to {@link Hub#broadcastMsg(MarkupMsg)}
 	 * 
 	 * @see Hub
-	 * @see Hub#sendMsg(MarkupMsg, long)
-	 * @see Hub#broadcastMsg(MarkupMsg)
-	 * @since 1.0
 	 */
 	public static final long BROADCAST_CONNECTION = 0l;
 	
@@ -48,7 +45,6 @@ public interface Connection {
 	 * @param msg message to send across the connection
 	 * @return true if the sending the message was successful, false otherwise.
 	 * 			It does not guarantee that the message was received.
-	 * @since 1.0
 	 */
 	boolean sendMsg(MarkupMsg msg);
 	
@@ -58,7 +54,6 @@ public interface Connection {
 	 * connections
 	 * 
 	 * @return the unique id associated with this connection
-	 * @since 1.0
 	 */
 	long getId();
 	
@@ -69,26 +64,24 @@ public interface Connection {
 	 * before messages received latter. Be aware that received messages are not guaranteed
 	 * to be in the order they were sent.
 	 * 
-	 * <p>this method should only return null if <code>isMsgAvailable()</code> returns
+	 * <p>this method should only return null if {@code isMsgAvailable()} returns
 	 * false</p>
 	 * 
-	 * <p>In most situations, one <code>Connection</code> will send a message to another
-	 * <code>Connection</code>. The received message can be read by calling
-	 * <code>pollNextMsg()</code>.</p>
+	 * <p>In most situations, one {@code Connection} will send a message to another
+	 * {@code Connection}. The received message can be read by calling
+	 * {@code pollNextMsg()}.</p>
 	 * 
-	 * @return the next available <code>MarkupMsg</code> or <code>null</code> if there
+	 * @return the next available {@code MarkupMsg} or {@code null} if there
 	 * 			are no messages to poll
-	 * @since 1.0
 	 */
 	MarkupMsg pollNextMsg();
 	
 	
 	/**
 	 * Returns whether message has been received and can be returned by calling
-	 * <code>pollNextMsg()</code>
+	 * {@code pollNextMsg()}
 	 * 
-	 * @return true if <code>pollNextMsg()</code> will not return null
-	 * @since 1.0
+	 * @return true if {@code pollNextMsg()} will not return null
 	 */
 	boolean isMsgAvailable();
 }

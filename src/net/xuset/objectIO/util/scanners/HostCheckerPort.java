@@ -19,7 +19,12 @@ import net.xuset.objectIO.util.scanners.HostChecker;
  *
  */
 public class HostCheckerPort implements HostChecker {
-	private static final int defaultTimeout = 500;
+	
+	/**
+	 * The default amount of time to wait in milliseconds to wait for the connection
+	 * to complete.
+	 */
+	public static final int DEFAULT_TIMEOUT = 500;
 	
 	private final int port, timeout;
 	
@@ -38,12 +43,12 @@ public class HostCheckerPort implements HostChecker {
 	
 	/**
 	 * Instantiates a new object with the given port and with a default timeout of
-	 * {@value #defaultTimeout} milliseconds.
+	 * {@value #DEFAULT_TIMEOUT} milliseconds.
 	 * 
 	 * @param port TCP port to check
 	 */
 	public HostCheckerPort(int port) {
-		this(port, defaultTimeout);
+		this(port, DEFAULT_TIMEOUT);
 	}
 
 	/**

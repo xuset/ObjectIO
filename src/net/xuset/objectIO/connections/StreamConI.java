@@ -21,7 +21,6 @@ public interface StreamConI extends Connection, MsgParsable{
 	 * this method can return true even though {@code close()} was never called.</p>
 	 * 
 	 * @return true if the connection is closed, false otherwise.
-	 * @since 1.0
 	 */
 	boolean isClosed();
 	
@@ -29,8 +28,6 @@ public interface StreamConI extends Connection, MsgParsable{
 	/**
 	 * Closes the connection, releasing any system resources.
 	 * Once a connection has been closed, it should no longer be used.
-	 * 
-	 * @since 1.0
 	 */
 	void close();
 	
@@ -38,8 +35,6 @@ public interface StreamConI extends Connection, MsgParsable{
 	/**
 	 * Flushes the connection's output buffer. Not all connections buffer their outgoing
 	 * messages so calling flush on some implementations will do nothing.
-	 * 
-	 * @since 1.0
 	 */
 	void flush();
 }

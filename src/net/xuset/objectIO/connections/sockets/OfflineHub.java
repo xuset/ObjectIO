@@ -14,7 +14,7 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  * InetHub</p>
  * 
  * @author xuset
- * @see TcpServer
+ * @see net.xuset.objectIO.connections.sockets.tcp.TcpServer TcpServer
  * @since 1.0
  *
  */
@@ -45,9 +45,9 @@ public class OfflineHub implements InetHub<InetCon> {
 	
 	/**
 	 * The connection will not be stored and cannot be retrieved by calling
-	 * @{code getConnectionByIndex(int)} or {@code getConnection(long)}.
+	 * {@code getConnectionByIndex(int)} or {@code getConnection(long)}.
 	 * 
-	 * @returns always true
+	 * @return always true
 	 */
 	@Override
 	public boolean addConnection(InetCon connection) {

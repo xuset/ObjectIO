@@ -24,7 +24,7 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
  * 
  * @author xuset
  * @see GroupServerCon
- * @see net.xuset.objectIO.connections.sockets.groupNet.GroupClientHub
+ * @see net.xuset.objectIO.connections.sockets.groupNet.client.GroupClientHub GroupClientHub
  * @since 1.0
  *
  */

@@ -20,7 +20,11 @@ import java.net.URL;
  *
  */
 public class AsynchronousUrlReader {
-	private static final long defaultTimeout = 3000L;
+	/** 
+	 * The default amount of time to wait while reading the received data 
+	 * in milliseconds.
+	 * */
+	public static final long DEFAULT_TIMEOUT = 3000L;
 	
 	private final String url;
 	private final int bufferSize;
@@ -76,13 +80,13 @@ public class AsynchronousUrlReader {
 	
 	/**
 	 * Constructs a new AsynchronousUrlReader with the given url and buffer size. A
-	 * default timeout of {@value #defaultTimeout} milliseconds is used.
+	 * default timeout of {@value #DEFAULT_TIMEOUT} milliseconds is used.
 	 * 
 	 * @param url string url to read the contents from
 	 * @param bufferSize the max buffer size
 	 */
 	public AsynchronousUrlReader(String url, int bufferSize) {
-		this(url, bufferSize, defaultTimeout);
+		this(url, bufferSize, DEFAULT_TIMEOUT);
 	}
 	
 	

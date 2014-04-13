@@ -25,7 +25,7 @@ public interface InetHub<T extends InetCon> extends Hub<T>{
 	
 	/**
 	 * Indicates if the hub has been shutdown.
-	 * @return
+	 * @return {@code true} if the hub has been shutdown
 	 */
 	boolean isShutdown();
 	

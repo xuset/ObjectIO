@@ -53,12 +53,13 @@ public class StreamCon implements StreamConI{
 	/**
 	 * The value is used to distinguish between the start and end of different messages.
 	 * Sending a message that contains this value will result in incorrectly reading
-	 * the message
+	 * the message.
 	 */
 	private char messageDelimeter = '\n';
 	
 	
-	/** when {@code true} and when the message queue is empty, calling {@code pollNextMsg}
+	/** 
+	 * When {@code true} and when the message queue is empty, calling {@code pollNextMsg}
 	 * or {@code isMsgAvailable} will block until a new message is received on the
 	 * InputStream. 
 	 */
@@ -246,7 +247,7 @@ public class StreamCon implements StreamConI{
 	 * @param bytes the byte array to write to the stream
 	 * @throws IOException if an error occurs while writing to the stream
 	 * @throws UnsupportedOperationException if sending messages is not supported
-	 * @see {@link #getMessageDelimeter()}
+	 * @see #getMessageDelimeter()
 	 */
 	protected synchronized void sendRawMsg(byte[] bytes) throws IOException {
 		if (!isSendingSupported())
@@ -321,10 +322,14 @@ public class StreamCon implements StreamConI{
 	
 	
 	/**
-	 * Attempts to read an entire MarkupMsg object in it's raw, String form. If does read
-	 * the entire raw MarkupMsg object, it calls {@code handleRawInput(String)}.
+	 * Attempts to read an entire MarkupMsg object in it's raw form. If it does read
+	 * the entire raw MarkupMsg object, it calls {@code handleRawInput(String)}. If
+	 * not enough data is present in the InputStream to construct an entire message,
+	 * false is returned. A entire message consists of all data between two message
+	 * delimiters.
 	 * 
 	 * @return true if an entire raw MarkupMsg object was read
+	 * @see #getMessageDelimeter()
 	 */
 	protected boolean attemptToReadRawMessage() {
 		try {

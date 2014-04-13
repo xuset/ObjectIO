@@ -16,7 +16,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
 
 
 /**
- * Virtual connection used by GroupClientHub. This connection is 'virtual' connection
+ * Virtual connection used by GroupClientHub. This connection is a 'virtual' connection
  * used to communicate with a different GroupClientCon on the internet without needing
  * a real connection like TCP. The messages sent through this connection are sent to the
  * server (GroupNetServer) and are forwarded across a real connection to the appropriate
@@ -24,6 +24,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  * 
  * @author xuset
  * @since 1.0
+ * @see net.xuset.objectIO.connections.sockets.groupNet.server.GroupNetServer GroupNetServer
  *
  */
 public class GroupClientCon extends AbstractConnection implements InetCon{

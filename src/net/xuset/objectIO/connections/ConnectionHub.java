@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 
 /**
- * A basic implementation of <code>HubI</code>.
+ * A basic implementation of a hub. Connections are stored in a list. Adding and
+ * removing connections manipulates this list.
  * 
  * @author xuset
- * @param <T> the type of <code>Connection</code> that will be stored
+ * @param <T> the type of {@code Connection} that will be stored
  * @see Connection
  * @since 1.0
  */
@@ -38,9 +39,9 @@ public class ConnectionHub<T extends Connection> implements Hub<T> {
 	
 	
 	/**
-	 * Sends a message to a stored connection whose id equals <code>connectionId</code>
+	 * Sends a message to a stored connection whose id equals {@code connectionId}
 	 * If there are multiple connections with the same id, only the connection that was
-	 * added first gets sent the message. If the <code>connectionId</code> equals
+	 * added first gets sent the message. If the {@code connectionId} equals
 	 * {@link Connection#BROADCAST_CONNECTION} then {@link #broadcastMsg(MarkupMsg)} is
 	 * called and returned.
 	 */

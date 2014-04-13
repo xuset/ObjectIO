@@ -15,7 +15,9 @@ import net.xuset.objectIO.util.scanners.HostChecker;
  *
  */
 public class NetworkPing implements HostChecker{
-	private static final int defaultTimeout = 500;
+	
+	/** The default amount of time to wait in milliseconds for a ping response. */
+	public static final int DEFAULT_TIMEOUT = 500;
 	
 	private final int timeout;
 	
@@ -30,11 +32,11 @@ public class NetworkPing implements HostChecker{
 
 	
 	/**
-	 * Creates a new NetworkPing object with {@value #defaultTimeout} milliseconds as a
+	 * Creates a new NetworkPing object with {@value #DEFAULT_TIMEOUT} milliseconds as a
 	 * timeout.
 	 */
 	public NetworkPing() {
-		this(defaultTimeout);
+		this(DEFAULT_TIMEOUT);
 	}
 	
 	
@@ -57,13 +59,13 @@ public class NetworkPing implements HostChecker{
 	
 	/**
 	 * Tests if the host is up by pinging the given address. The default timeout
-	 * for this method is {@value #defaultTimeout} milliseconds.
+	 * for this method is {@value #DEFAULT_TIMEOUT} milliseconds.
 	 * 
 	 * @param addr the address to ping
 	 * @return {@code true} if the host is up
 	 */
 	public static boolean isHostUp(InetAddress addr) {
-		return isHostUp(addr, defaultTimeout);
+		return isHostUp(addr, DEFAULT_TIMEOUT);
 	}
 	
 	
