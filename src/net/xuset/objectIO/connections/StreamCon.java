@@ -38,7 +38,7 @@ public class StreamCon implements StreamConI{
 	
 	
 	private final Queue<MarkupMsg> msgQueue = new LinkedList<MarkupMsg>();
-	private final StringBuffer lineBuffer = new StringBuffer();
+	private final StringBuilder lineBuffer = new StringBuilder(8192);
 	private final long id;
 	private final InputStream in;
 	private final OutputStream out;
@@ -328,24 +328,31 @@ public class StreamCon implements StreamConI{
 	 */
 	protected boolean attemptToReadRawMessage() {
 		try {
-			while (in.available() > 0 || shouldBlockForInput) {
-				int read = in.read();
-				reachedEndOfInput = read == -1;
+			synchronized(in) {
 				
-				if (reachedEndOfInput) {
-					log.log(Level.INFO, "connection(" + getId() +
-							") reached the end of the input stream");
-					handleRawInput(null);
-					return false;
+				while (in.available() > 0 || shouldBlockForInput) {
+					int read = in.read();
+					reachedEndOfInput = read == -1;
+					
+					if (reachedEndOfInput) {
+						log.log(Level.INFO, "connection(" + getId() +
+								") reached the end of the input stream");
+						handleRawInput(null);
+						return false;
+					}
+					
+					if (read == messageDelimeter) {
+						handleRawInput(lineBuffer.toString());
+						lineBuffer.delete(0, lineBuffer.length());
+						return true;
+					}
+					
+					if (lineBuffer.length() == lineBuffer.capacity())
+						lineBuffer.ensureCapacity(lineBuffer.length() + in.available());
+					
+					lineBuffer.append((char) read);
 				}
 				
-				if (read == messageDelimeter) {
-					handleRawInput(lineBuffer.toString());
-					lineBuffer.delete(0, lineBuffer.length());
-					return true;
-				}
-				
-				lineBuffer.append((char) read);
 			}
 		} catch (IOException ex) {
 			if (!isClosed()) {
