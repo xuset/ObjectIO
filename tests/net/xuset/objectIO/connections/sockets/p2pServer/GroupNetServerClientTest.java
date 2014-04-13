@@ -11,13 +11,14 @@ import net.xuset.objectIO.connections.sockets.InetHub;
 import net.xuset.objectIO.connections.sockets.groupNet.client.GroupClientHub;
 import net.xuset.objectIO.connections.sockets.groupNet.server.GroupNetServer;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
+import net.xuset.objectIO.markupMsg.MsgParserTest;
 import net.xuset.objectIO.util.ConnectionIdGenerator;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class P2PServerClientTest {
+public class GroupNetServerClientTest {
 	private static final int maxClients = 4; //minimum of 2
 	private static final String serverIp = "127.0.0.1";
 	private static final int serverPort = 3000;
@@ -64,28 +65,62 @@ public class P2PServerClientTest {
 	
 	@Test
 	public void testClientToClient() {
-		final int testMessages = 4;
 		InetHub<?> sender = clients.get(0);
 		InetHub<?> reciever = clients.get(1);
+		sender.sendMsg(createMsgWithContent(0), reciever.getLocalId());
+		sender.getConnectionById(reciever.getLocalId()).flush();
+		
+		final long maxWait = 100L;
+		long timeStarted = System.currentTimeMillis();
+		MarkupMsg received = null;
+		InetCon receiverCon = reciever.getConnectionById(sender.getLocalId());
+		while (received == null && System.currentTimeMillis() - timeStarted < maxWait) {
+			if (receiverCon.isMsgAvailable())
+				received = receiverCon.pollNextMsg();
+		}
+		
+		assertNotNull(received);
+		assertMsgContentEquals(received, 0);
+		assertEmptyMsgQueue();
+	}
+	
+	@Test
+	public void testLoad() {
+		final int testMessages = 100;
+		final long maxTimeToWait = 5 * 1000L; //in milliseconds
+		final MarkupMsg testMsg = MsgParserTest.createMsgRandom();
+		MsgParserTest.addNestedMsgs(testMsg, 100);
+		InetHub<?> sender = clients.get(0);
+		InetHub<?> reciever = clients.get(1);
+		
+		long time = System.currentTimeMillis();
 		for (int i = 0; i < testMessages; i++)
-			sender.sendMsg(createMsgWithContent(i), reciever.getLocalId());
-		for (int i = 0; i < sender.getConnectionCount(); i++)
-			sender.getConnectionByIndex(i).flush();
+			sender.sendMsg(testMsg, reciever.getLocalId());
+		sender.getConnectionById(reciever.getLocalId()).flush();
 		
-		try { Thread.sleep(100); } catch (InterruptedException ex) { }
+		time = System.currentTimeMillis() - time;
+		System.out.println("---Sent " + testMessages + " in " + (time / 1000.0) + "s");
+		time = System.currentTimeMillis();
 		
-		for (int i = 0; i < reciever.getConnectionCount(); i++) {
-			InetCon con = reciever.getConnectionByIndex(i);
+		InetCon recCon = reciever.getConnectionById(sender.getLocalId());
+		int receivedCount = 0;
+		while(receivedCount < testMessages &&
+				System.currentTimeMillis() - time <= maxTimeToWait) {
 			
-			if (con.getId() == sender.getLocalId()) {
-				for (int j = 0; j < testMessages; j++) {
-					assertTrue(con.isMsgAvailable());
-					assertMsgContentEquals(con.pollNextMsg(), j);
-				}
+			if (recCon.isMsgAvailable()) {
+				recCon.pollNextMsg();
+				receivedCount++;
 			} else {
-				assertFalse(con.isMsgAvailable());
+				Thread.yield();
 			}
 		}
+		assertEquals(testMessages, receivedCount);
+		
+		time = System.currentTimeMillis() - time;
+		System.out.println("---Received " + testMessages + " in " + (time / 1000.0) + "s");
+	
+		
+		assertEmptyMsgQueue();
 	}
 	
 	@Test

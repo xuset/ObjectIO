@@ -37,11 +37,16 @@ public class MsgParserTest {
 		
 	}
 	
-	private MarkupMsg createMsgRandomNests() {
+	public static  MarkupMsg createMsgRandomNests() {
+
+		return createMsgRandomNests((int) (Math.random() * 3) + 2);
+	}
+	
+	public static MarkupMsg createMsgRandomNests(int layers) {
+
 		MarkupMsg base = createMsgRandom();
 		
 		MarkupMsg next = base;
-		int layers = (int) (Math.random() * 3) + 2;
 		for (int i = 0; i < layers; i++) {
 			addNestedMsgs(next);
 			next = next.getNestedMsgs().get(0);
@@ -49,17 +54,17 @@ public class MsgParserTest {
 		return base;
 	}
 	
-	private void addNestedMsgs(MarkupMsg msg, int count) {
+	public static void addNestedMsgs(MarkupMsg msg, int count) {
 		for (int i = 0; i < count; i++) {
 			msg.getNestedMsgs().add(createMsgRandom());
 		}
 	}
 	
-	private void addNestedMsgs(MarkupMsg msg) {
+	public static void addNestedMsgs(MarkupMsg msg) {
 		addNestedMsgs(msg, (int) (Math.random() * 2) + 2);
 	}
 	
-	private MarkupMsg createMsgRandom() {
+	public static MarkupMsg createMsgRandom() {
 		MarkupMsg msg = new MarkupMsg();
 		int attribCount = (int) (Math.random() * 5) + 2;
 		for (int i = 0; i < attribCount; i++) {
