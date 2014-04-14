@@ -29,17 +29,16 @@ import net.xuset.objectIO.markupMsg.MsgParser;
  */
 public class GroupClientCon extends AbstractConnection implements InetCon{
 	private static final Logger log = Logger.getLogger(GroupClientCon.class.getName());
-	
-	private final List<InetEventListener> eventListeners = new ArrayList<InetEventListener>();
-	private final List<MarkupMsg> outputBuffer = new ArrayList<MarkupMsg>();
+
+	private final List<InetEventListener> eventListeners =
+			new ArrayList<InetEventListener>();
 	private final GroupClientHub hub;
 	private final boolean isBroadcast;
 	private MsgParser msgParser = new AsciiMsgParser();
-	
+
 	private boolean isClosed = false;
-	private GroupNetMsg outputMsg;
-	
-	
+
+
 	/**
 	 * Creates a non-broadcast instance of GroupClientCon
 	 * 
@@ -50,7 +49,7 @@ public class GroupClientCon extends AbstractConnection implements InetCon{
 		this(hub, endId, false);
 	}
 
-	
+
 	/**
 	 * Creates an instance of GroupClientCon
 	 * 
@@ -62,14 +61,13 @@ public class GroupClientCon extends AbstractConnection implements InetCon{
 		super(endId, new ConcurrentLinkedQueue<MarkupMsg>());
 		this.hub = hub;
 		this.isBroadcast = isBroadcast;
-		resetOutputBuffer();
 	}
-	
+
 	@Override
 	public boolean isLoopback() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isBroadcast() {
 		return isBroadcast;
@@ -84,43 +82,25 @@ public class GroupClientCon extends AbstractConnection implements InetCon{
 	protected boolean sendRawMsg(GroupNetMsg msg) {
 		return hub.sendRaw(msg);
 	}
-	
-	
-	/**
-	 * Flushes the buffered messages and resets the message buffer.
-	 * 
-	 * @return {@code true} if there were messages to flush. {@code false} if the message
-	 * 			buffer was empty.
-	 */
-	boolean flushOutputBuffer() {
-		if (!outputMsg.getNestedMsgs().isEmpty()) {
-			boolean success = sendRawMsg(outputMsg);
-			resetOutputBuffer();
-			return success;
-		}
-		return false;
-	}
-	
-	private void resetOutputBuffer() {
-		outputBuffer.clear();
-		outputMsg = new GroupNetMsg(outputBuffer);
-		outputMsg.to(getId());
-		outputMsg.from(getLocalId());
-	}
 
 	@Override
 	public void flush() {
 		if (isClosed)
 			throw new RuntimeException("Connection is closed");
-		if (flushOutputBuffer())
-			hub.flushComm();
+		hub.flushComm();
 	}
 
 	@Override
 	public boolean sendMsg(MarkupMsg msg) {
 		if (isClosed)
 			throw new RuntimeException("Connection is closed");
-		outputMsg.addNested(msg);
+
+		GroupNetMsg parentMsg = new GroupNetMsg();
+		parentMsg.to(getId());
+		parentMsg.from(getLocalId());
+		parentMsg.addNested(msg);
+
+		sendRawMsg(parentMsg);
 		return true;
 	}
 
@@ -157,7 +137,7 @@ public class GroupClientCon extends AbstractConnection implements InetCon{
 	public boolean unwatchEvents(InetEventListener e) {
 		return eventListeners.remove(e);
 	}
-	
+
 	@Override
 	protected void addMsgToQueue(MarkupMsg msg) {
 		super.addMsgToQueue(msg);

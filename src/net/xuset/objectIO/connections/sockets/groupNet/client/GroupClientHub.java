@@ -58,6 +58,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	private final ClientComm comm;
 	private MsgParser msgParser = new AsciiMsgParser();
 	private boolean isShutdown = false;
+	private boolean flushNeeded = false;
 	
 	/**
 	 * Indicates if this hub is connected to the server.
@@ -107,6 +108,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	 * @return if the message was sent successfully
 	 */
 	boolean sendRaw(GroupNetMsg msg) {
+		flushNeeded = true;
 		return comm.sendMsg(msg);
 	}
 	
@@ -114,7 +116,8 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	 * Flushes the connection to the server
 	 */
 	void flushComm() {
-		comm.flush();
+		if (flushNeeded)
+			comm.flush();
 	}
 	
 	@Override
