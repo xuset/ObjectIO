@@ -39,6 +39,7 @@ class ClientComm extends TcpHandshakeCon {
 		log.log(Level.INFO, "Socket connection to server established");
 		try {
 			s.setKeepAlive(true);
+			s.setTcpNoDelay(true);
 			return new ClientComm(s, hub);
 		} catch (IOException ex) {
 			log.log(Level.SEVERE, "Connection instance could not be constructed", ex);
