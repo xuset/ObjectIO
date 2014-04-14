@@ -65,7 +65,9 @@ public class NetFunc extends AbstractNetObject {
 	 */
 	@Override
 	public MarkupMsg serializeToMsg() {
-		return new MarkupMsg();
+		MarkupMsg msg = new MarkupMsg();
+		msg.setName(getId());
+		return msg;
 	}
 
 	@Override
@@ -82,6 +84,7 @@ public class NetFunc extends AbstractNetObject {
 	@Override
 	public MarkupMsg serializeUpdates() {
 		MarkupMsg updates = bufferMsg;
+		updates.setName(getId());
 		bufferMsg = new MarkupMsg();
 		return updates;
 	}

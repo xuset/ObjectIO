@@ -89,9 +89,7 @@ public abstract class NetClass extends AbstractNetObject{
 		Iterator<NetObject> iterator = iterator();
 		while (iterator.hasNext()) {
 			NetObject obj = iterator.next();
-			MarkupMsg serialized = obj.serializeToMsg();
-			serialized.setName(obj.getId());
-			parentMsg.addNested(serialized);
+			parentMsg.addNested(obj.serializeToMsg());
 		}
 		
 		return parentMsg;
@@ -120,9 +118,7 @@ public abstract class NetClass extends AbstractNetObject{
 			if (!obj.hasUpdates())
 				continue;
 			
-			MarkupMsg updates = obj.serializeUpdates();
-			updates.setName(obj.getId());
-			parentMsg.addNested(updates);
+			parentMsg.addNested(obj.serializeUpdates());
 		}
 		
 		return parentMsg;

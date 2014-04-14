@@ -6,11 +6,18 @@ import net.xuset.objectIO.markupMsg.MarkupMsg;
 /**
  * This class outlines the functions necessary for synchronizing data across connections.
  * The purpose of NetObject along with it's implementations is to provide an easy to
- * to keep data synchronized between connections.
+ * to keep data synchronized between connections. The implementations of this interface
+ * serialize their state into MarkupMsg objects. The message object can then be sent
+ * through a Connection and deserialized so the two remote NetObject instances share the
+ * same state.
  * 
- * <p>The implementations of NetObject can serialize their states to MarkupMsg objects
- * which can then be sent to a ConnectionI. The receiver can then deserialize the
- * received message into a NetObject of the same class type.</p>
+ * <p>
+ * It is the implementations responsibility to append the id of the NetObject to the
+ * message when it is being serialized. The name of a message that is returned by
+ * {@code serializeToMsg()} or {@code serializeUpdates()} must be equal to the id
+ * of the NetObject instance. The name of MarkupMsg object can be read and set by
+ * calling {@code getName()} and {@code setName(String)} on the MarkupMsg object.
+ * </p>
  * 
  * @author xuset
  * @since 1.0

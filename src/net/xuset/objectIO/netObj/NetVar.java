@@ -85,6 +85,7 @@ public abstract class NetVar<T> extends AbstractNetObject {
 	public MarkupMsg serializeToMsg() {
 		MarkupMsg msg = new MarkupMsg();
 		msg.setContent(value.toString());
+		msg.setName(getId());
 		return msg;
 	}
 
