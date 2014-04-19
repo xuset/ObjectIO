@@ -140,7 +140,7 @@ public class OfflineHub implements InetHub<InetCon> {
 	 * @return always true
 	 */
 	@Override
-	public boolean watchEvents(ServerEventListener<InetCon> e) {
+	public boolean watchEvents(ServerEventListener e) {
 		return true;
 	}
 	
@@ -152,7 +152,7 @@ public class OfflineHub implements InetHub<InetCon> {
 	 * @return always true
 	 */
 	@Override
-	public boolean unwatchEvents(ServerEventListener<InetCon> e) {
+	public boolean unwatchEvents(ServerEventListener e) {
 		return true;
 	}
 }

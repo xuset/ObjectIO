@@ -27,8 +27,8 @@ import net.xuset.objectIO.util.ConnectionIdGenerator;
 public class TcpServer implements InetHub<TcpCon>{
 	private static final Logger log = Logger.getLogger(TcpServer.class.getName());
 	
-	private final ArrayList<ServerEventListener<TcpCon>> eventListeners =
-			new ArrayList<ServerEventListener<TcpCon>>();
+	private final ArrayList<ServerEventListener> eventListeners =
+			new ArrayList<ServerEventListener>();
 	private final ArrayList<TcpCon> connections = new ArrayList<TcpCon>();
 	private final long localId;
 	private final TcpAcceptor<TcpCon> acceptor;
@@ -123,10 +123,10 @@ public class TcpServer implements InetHub<TcpCon>{
 		synchronized(connections) {
 			found = connections.remove(connection);
 		}
-		for (ServerEventListener<TcpCon> l : eventListeners)
+		for (ServerEventListener l : eventListeners)
 			l.onRemove(connection);
 		if (connections.isEmpty()) {
-			for (ServerEventListener<TcpCon> l : eventListeners)
+			for (ServerEventListener l : eventListeners)
 				l.onLastRemove();
 		}
 		return found;
@@ -139,7 +139,7 @@ public class TcpServer implements InetHub<TcpCon>{
 		synchronized(connections) {
 			connections.add(connection);
 		}
-		for (ServerEventListener<TcpCon> l : eventListeners)
+		for (ServerEventListener l : eventListeners)
 			l.onAdd(connection);
 		return true;
 	}
@@ -168,12 +168,12 @@ public class TcpServer implements InetHub<TcpCon>{
 	}
 
 	@Override
-	public boolean watchEvents(ServerEventListener<TcpCon> e) {
+	public boolean watchEvents(ServerEventListener e) {
 		return eventListeners.add(e);
 	}
 
 	@Override
-	public boolean unwatchEvents(ServerEventListener<TcpCon> e) {
+	public boolean unwatchEvents(ServerEventListener e) {
 		return eventListeners.remove(e);
 	}
 	

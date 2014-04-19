@@ -6,9 +6,8 @@ package net.xuset.objectIO.connections.sockets;
  * 
  * @author xuset
  * @since 1.0
- * @param <T> the type of InetCon that the server uses.
  */
-public interface ServerEventListener<T extends InetCon> {
+public interface ServerEventListener {
 	
 	
 	/**
@@ -16,7 +15,7 @@ public interface ServerEventListener<T extends InetCon> {
 	 * 
 	 * @param con the removed connection
 	 */
-	void onRemove(T con);
+	void onRemove(InetCon con);
 	
 	
 	/**
@@ -24,7 +23,7 @@ public interface ServerEventListener<T extends InetCon> {
 	 * 
 	 * @param con the added connection
 	 */
-	void onAdd(T con);
+	void onAdd(InetCon con);
 	
 	
 	/**

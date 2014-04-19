@@ -32,7 +32,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	private static final Logger log = Logger.getLogger(GroupNetServer.class.getName());
 	
 	private final long localId;
-	private final List<ServerEventListener<GroupServerCon>> eventListeners;
+	private final List<ServerEventListener> eventListeners;
 	private final Queue<GroupServerCon> connections;
 	private final GroupNetAcceptor acceptor;
 	private boolean isShutdown = false;
@@ -55,7 +55,7 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	public GroupNetServer(long localId, int port) throws IOException {
 		this.localId = localId;
 		connections = new ConcurrentLinkedQueue<GroupServerCon>();
-		eventListeners = new ArrayList<ServerEventListener<GroupServerCon>>();
+		eventListeners = new ArrayList<ServerEventListener>();
 		acceptor = new GroupNetAcceptor(this, port);
 		log.log(Level.INFO, "new instance created with id=" + localId);
 	}
@@ -195,12 +195,12 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	}
 
 	@Override
-	public boolean watchEvents(ServerEventListener<GroupServerCon> e) {
+	public boolean watchEvents(ServerEventListener e) {
 		return eventListeners.add(e);
 	}
 
 	@Override
-	public boolean unwatchEvents(ServerEventListener<GroupServerCon> e) {
+	public boolean unwatchEvents(ServerEventListener e) {
 		return eventListeners.remove(e);
 	}
 	
@@ -215,25 +215,25 @@ public class GroupNetServer implements InetHub<GroupServerCon>{
 	
 	//Notifies listeners of a connection being removed
 	private void notifyRemove(GroupServerCon c) {
-		for (ServerEventListener<GroupServerCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onRemove(c);
 	}
 	
 	//Notifies listeners of the last connection being removed
 	private void notifyLastRemove() {
-		for (ServerEventListener<GroupServerCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onLastRemove();
 	}
 	
 	//Notifies listeners of a newly added connection
 	private void notifyAdd(GroupServerCon c) {
-		for (ServerEventListener<GroupServerCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onAdd(c);
 	}
 	
 	//Notifies listeners on server shutdown
 	private void notifyShutdown() {
-		for (ServerEventListener<GroupServerCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onShutdown();
 	}
 	

@@ -45,7 +45,7 @@ public interface InetHub<T extends InetCon> extends Hub<T>{
 	 * @param e the listener that will be notified
 	 * @return {@code true} if the listener was successfully added.
 	 */
-	boolean watchEvents(ServerEventListener<T> e);
+	boolean watchEvents(ServerEventListener e);
 	
 	
 	/**
@@ -54,5 +54,5 @@ public interface InetHub<T extends InetCon> extends Hub<T>{
 	 * @param e event listener to remove.
 	 * @return {@code true} if the listener was found and removed successfully.
 	 */
-	boolean unwatchEvents(ServerEventListener<T> e);
+	boolean unwatchEvents(ServerEventListener e);
 }

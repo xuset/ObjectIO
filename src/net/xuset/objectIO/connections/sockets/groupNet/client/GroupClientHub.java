@@ -51,7 +51,7 @@ import net.xuset.objectIO.markupMsg.MsgParser;
 public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	private static final Logger log = Logger.getLogger(GroupClientHub.class.getName());
 	
-	private final List<ServerEventListener<GroupClientCon>> eventListeners;
+	private final List<ServerEventListener> eventListeners;
 	private final List<GroupClientCon> connections = new ArrayList<GroupClientCon>();
 	private final long localId;
 	private final CmdChain cmdChain;
@@ -79,7 +79,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	 */
 	public GroupClientHub(String ip, int port, long localId) throws IOException {
 		this.localId = localId;
-		eventListeners = new ArrayList<ServerEventListener<GroupClientCon>>();
+		eventListeners = new ArrayList<ServerEventListener>();
 		cmdChain = Commands.constructChain(this);
 		
 		comm = ClientComm.connectToGroupNetServer(ip, port, this);
@@ -146,7 +146,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 		synchronized(connections) {
 			connections.add(con);
 		}
-		for (ServerEventListener<GroupClientCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onAdd(con);
 		return true;
 	}
@@ -158,7 +158,7 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 		synchronized(connections) {
 			found = connections.remove(connection);
 		}
-		for (ServerEventListener<GroupClientCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onRemove(connection);
 		return found;
 	}
@@ -180,9 +180,9 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 		synchronized(connections) {
 			connections.clear();
 		}
-		for (ServerEventListener<GroupClientCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onLastRemove();
-		for (ServerEventListener<GroupClientCon> e : eventListeners)
+		for (ServerEventListener e : eventListeners)
 			e.onShutdown();
 	}
 
@@ -220,12 +220,12 @@ public class GroupClientHub implements InetHub<GroupClientCon>, MsgParsable{
 	}
 
 	@Override
-	public boolean watchEvents(ServerEventListener<GroupClientCon> e) {
+	public boolean watchEvents(ServerEventListener e) {
 		return eventListeners.add(e);
 	}
 
 	@Override
-	public boolean unwatchEvents(ServerEventListener<GroupClientCon> e) {
+	public boolean unwatchEvents(ServerEventListener e) {
 		return eventListeners.remove(e);
 	}
 
