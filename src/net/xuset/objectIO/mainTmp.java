@@ -3,8 +3,9 @@ package net.xuset.objectIO;
 import net.xuset.objectIO.markupMsg.AsciiMsgParser;
 import net.xuset.objectIO.markupMsg.MarkupMsg;
 import net.xuset.objectIO.markupMsg.MsgParser;
+import net.xuset.objectIO.netObj.NetClass;
 import net.xuset.objectIO.netObj.NetComp;
-import net.xuset.objectIO.netObj.NetPrim;
+import net.xuset.objectIO.netObj.NetVar;
 
 /**
  * Created by xuset on 7/24/14.
@@ -15,24 +16,24 @@ public class mainTmp {
 
     public static class Entity {
 
-        @NetPrim
-        boolean isVisible = false;
+        @NetVar(recursive = true)
+        Entity entity = null;
 
-        @NetPrim
+        @NetVar
          int x = 0;
 
-        @NetPrim
+        @NetVar
          Integer y = 0;
 
         @Override
         public String toString() {
-            return x + " : " + y + " : " + isVisible;
+            return x + " : " + y + " : " + String.valueOf(entity);
         }
     }
 
     public static class Wall extends Entity {
 
-        @NetPrim
+        @NetVar
         String spriteId = "wall";
 
         @Override
@@ -43,12 +44,14 @@ public class mainTmp {
 
     public static void main(String[] args) {
         Entity e = new Wall();
-        NetComp comp = new NetComp("1231313", e);
+        e.entity = new Entity();
+        NetClass comp = new NetClass("1231313", e);
 
         MarkupMsg saveState = comp.serializeToMsg();
         System.out.println(e);
 
-        e.x = 33; e.y = 44; e.isVisible = true; ((Wall)e).spriteId = "ball";
+        e.x = 33; e.y = 44; ((Wall)e).spriteId = "ball";
+        e.entity.x = 1; e.entity.y = 2;
         System.out.println(e);
 
         comp.deserializeMsg(saveState);
