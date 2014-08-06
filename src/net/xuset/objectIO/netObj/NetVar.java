@@ -9,8 +9,7 @@ import java.lang.annotation.Target;
  * Created by xuset on 7/23/14.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target( {ElementType.FIELD, ElementType.TYPE})
 public @interface NetVar {
-    boolean recursive() default false;
-    String name() default "";
+    String id() default "";
 }
