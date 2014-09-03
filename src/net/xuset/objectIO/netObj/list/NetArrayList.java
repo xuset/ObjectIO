@@ -166,7 +166,7 @@ public class NetArrayList<T> implements NetList<T> {
     @Override
     public void clear() {
         while (!isEmpty())
-            remove(size());
+            remove(size() - 1);
     }
 
     @Override

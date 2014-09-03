@@ -43,7 +43,7 @@ class NetObjWrapper implements NetPrototype {
 
     @Override
     public boolean canHandle(Class<?> srcClass) {
-        return (srcClass.isAssignableFrom(NetObject.class));
+        return NetObject.class.isAssignableFrom(srcClass);
     }
 
     @Override
